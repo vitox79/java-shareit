@@ -14,22 +14,21 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectParameterException(final NotFoundException e) {
         return new ErrorResponse(
-                String.format(e.getMessage())
+            String.format(e.getMessage())
         );
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleIncorrectParameterException(final DataNotFoundException e) {
-        return new ErrorResponse(
-                String.format(e.getMessage())
-        );
+        return new ErrorResponse(String.format(e.getMessage()));
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleIncorrectParameterException(final IllegalArgumentException e) {
         return new ErrorResponse(
-                String.format(e.getMessage())
+            String.format(e.getMessage())
         );
     }
 
