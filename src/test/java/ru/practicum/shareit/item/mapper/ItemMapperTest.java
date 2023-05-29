@@ -5,7 +5,6 @@ import org.mapstruct.factory.Mappers;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
