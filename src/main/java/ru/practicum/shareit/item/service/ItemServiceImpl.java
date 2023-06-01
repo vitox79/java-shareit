@@ -1,27 +1,26 @@
 package ru.practicum.shareit.item.service;
 
-
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.model.DataNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.storage.StorageItem;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImpl implements ItemService {
-    private final List<Item> items;
-    private long count = 1;
+    private final StorageItem storageItem;
     private final UserService userService;
 
-    public ItemServiceImpl(UserService userService) {
+    public ItemServiceImpl(StorageItem storageItem, UserService userService) {
+        this.storageItem = storageItem;
         this.userService = userService;
-        this.items = new ArrayList<>();
     }
 
     @Override
@@ -30,27 +29,20 @@ public class ItemServiceImpl implements ItemService {
         if (owner == null) {
             throw new DataNotFoundException("User not found");
         }
-        System.out.println(itemDto.getClass().toString() + itemDto);
         itemDto.setOwnerId(UserMapper.INSTANCE.toUser(owner).getId());
-        itemDto.setId(generateItemId());
         Item newItem = ItemMapper.INSTANCE.toItem(itemDto);
-        items.add(newItem);
+        storageItem.addItem(newItem);
         return ItemMapper.INSTANCE.toItemDto(newItem);
     }
 
     @Override
     public ItemDto editItem(long itemId, ItemDto itemDto) {
-        Item existingItem = getItemFromList(itemId);
+        Item existingItem = storageItem.getItemById(itemId);
         if (existingItem == null) {
             throw new DataNotFoundException("Item not found");
         }
 
-        UserDto owner = userService.getUserById(existingItem.getOwnerId());
-        if (owner == null) {
-            throw new DataNotFoundException("User not found");
-        }
-
-        if (owner.getId() != itemDto.getOwnerId()) {
+        if (existingItem.getOwnerId() != itemDto.getOwnerId()) {
             throw new DataNotFoundException("User is not the owner of the item");
         }
 
@@ -58,12 +50,14 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getDescription() != null) existingItem.setDescription(itemDto.getDescription());
         if (itemDto.getAvailable() != null) existingItem.setAvailable(itemDto.getAvailable().booleanValue());
 
+        storageItem.updateItem(existingItem);
+
         return ItemMapper.INSTANCE.toItemDto(existingItem);
     }
 
     @Override
     public ItemDto getItemById(long itemId) {
-        Item item = getItemFromList(itemId);
+        Item item = storageItem.getItemById(itemId);
         if (item == null) {
             throw new DataNotFoundException("Item not found");
         }
@@ -73,40 +67,17 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getItemsByOwnerId(long ownerId) {
-        List<ItemDto> ownerItems = new ArrayList<>();
-        for (Item item : items) {
-            if (item.getOwnerId() == ownerId) {
-                ownerItems.add(ItemMapper.INSTANCE.toItemDto(item));
-            }
-        }
-
-        return ownerItems;
+        List<Item> ownerItems = storageItem.getItemsByOwnerId(ownerId);
+        return ownerItems.stream()
+            .map(ItemMapper.INSTANCE::toItemDto)
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<ItemDto> searchItems(String searchText) {
-        List<ItemDto> foundItems = new ArrayList<>();
-        for (Item item : items) {
-            if (item.isAvailable() &&
-                    (item.getName().toLowerCase().contains(searchText.toLowerCase()) ||
-                            item.getDescription().toLowerCase().contains(searchText.toLowerCase()))) {
-                foundItems.add(ItemMapper.INSTANCE.toItemDto(item));
-            }
-        }
-        return foundItems;
-    }
-
-    private Item getItemFromList(long itemId) {
-        for (Item item : items) {
-            if (item.getId() == itemId) {
-                return item;
-            }
-        }
-        return null;
-    }
-
-    private long generateItemId() {
-
-        return count++;
+        List<Item> foundItems = storageItem.searchItems(searchText);
+        return foundItems.stream()
+            .map(ItemMapper.INSTANCE::toItemDto)
+            .collect(Collectors.toList());
     }
 }
