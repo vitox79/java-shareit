@@ -3,23 +3,24 @@ package ru.practicum.shareit.storage;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class StorageItem {
     private final Map<Long, Item> items;
+    private final Map<Long, List<Item>> userItemIndex;
     private long count = 1;
 
     public StorageItem() {
-        this.items = new HashMap<>();
+        this.items = new LinkedHashMap<>();
+        this.userItemIndex = new LinkedHashMap<>();
     }
 
     public void addItem(Item item) {
         item.setId(generateItemId());
         items.put(item.getId(), item);
+        userItemIndex.computeIfAbsent(item.getOwnerId(), key -> new ArrayList<>()).add(item);
     }
 
     public void updateItem(Item item) {
@@ -33,9 +34,7 @@ public class StorageItem {
     }
 
     public List<Item> getItemsByOwnerId(long ownerId) {
-        return items.values().stream()
-            .filter(item -> item.getOwnerId() == ownerId)
-            .collect(Collectors.toList());
+        return userItemIndex.getOrDefault(ownerId, Collections.emptyList());
     }
 
     public List<Item> searchItems(String searchText) {
