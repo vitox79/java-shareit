@@ -25,7 +25,6 @@ public class ItemController {
 
     @PostMapping
     public ItemDto addItem(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId, @Valid @RequestBody ItemDto itemDto, BindingResult bindingResult) {
-        System.out.println(itemDto);
         if (bindingResult.hasErrors()) {
             log.error("Invalid item data");
             throw new NotFoundException("Invalid item data");
