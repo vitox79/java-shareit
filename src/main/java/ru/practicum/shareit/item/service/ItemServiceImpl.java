@@ -5,27 +5,27 @@ import ru.practicum.shareit.exception.model.DataNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.storage.StorageItem;
+import ru.practicum.shareit.repository.RepositoryItem;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.repository.RepositoryUser;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImpl implements ItemService {
-    private final StorageItem storageItem;
-    private final UserService userService;
+    private final RepositoryItem storageItem;
+    private final RepositoryUser storageUser;
 
-    public ItemServiceImpl(StorageItem storageItem, UserService userService) {
+    public ItemServiceImpl(RepositoryItem storageItem, RepositoryUser storageUser) {
         this.storageItem = storageItem;
-        this.userService = userService;
+        this.storageUser = storageUser;
     }
 
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
-        UserDto owner = userService.getUserById(userId);
+        UserDto owner = storageUser.getUserById(userId);
         if (owner == null) {
             throw new DataNotFoundException("User not found");
         }

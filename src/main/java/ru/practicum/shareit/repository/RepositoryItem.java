@@ -1,4 +1,4 @@
-package ru.practicum.shareit.storage;
+package ru.practicum.shareit.repository;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Item;
@@ -7,12 +7,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-public class StorageItem {
+public class RepositoryItem {
     private final Map<Long, Item> items;
     private final Map<Long, List<Item>> userItemIndex;
     private long count = 1;
 
-    public StorageItem() {
+    public RepositoryItem() {
         this.items = new LinkedHashMap<>();
         this.userItemIndex = new LinkedHashMap<>();
     }

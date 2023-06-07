@@ -3,15 +3,15 @@ package ru.practicum.shareit.user.service;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.storage.StorageUser;
+import ru.practicum.shareit.repository.RepositoryUser;
 
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final StorageUser storageUser;
+    private final RepositoryUser storageUser;
 
-    public UserServiceImpl(StorageUser storageUser) {
+    public UserServiceImpl(RepositoryUser storageUser) {
         this.storageUser = storageUser;
     }
 

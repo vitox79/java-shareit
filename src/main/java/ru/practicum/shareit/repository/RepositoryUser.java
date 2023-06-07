@@ -1,4 +1,4 @@
-package ru.practicum.shareit.storage;
+package ru.practicum.shareit.repository;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.model.DataNotFoundException;
@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-public class StorageUser {
+public class RepositoryUser {
     private final Map<Long, User> userMap;
     private long userIdGenerator;
 
-    public StorageUser() {
+    public RepositoryUser() {
         this.userMap = new HashMap<>();
         this.userIdGenerator = 1L;
     }
