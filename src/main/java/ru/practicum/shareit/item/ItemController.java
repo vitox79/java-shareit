@@ -42,7 +42,7 @@ public class ItemController {
         if (userId == null) {
             throw new NotFoundException("\"X-Sharer-User-Id not exist");
         }
-        itemDto.setOwnerId(userId);
+        itemDto.setOwner(userId);
         return itemService.editItem(itemId, itemDto);
     }
 

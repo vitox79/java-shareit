@@ -1,83 +1,85 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.model.DataNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.repository.RepositoryItem;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.repository.RepositoryUser;
+import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.repository.RepositoryUser;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final RepositoryItem storageItem;
-    private final RepositoryUser storageUser;
+    private final ItemRepository itemRepository;
+    private final RepositoryUser userRepository;
 
-    public ItemServiceImpl(RepositoryItem storageItem, RepositoryUser storageUser) {
-        this.storageItem = storageItem;
-        this.storageUser = storageUser;
-    }
+    @Autowired
+    private ItemMapper itemMapper;
 
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
-        UserDto owner = storageUser.getUserById(userId);
+        User owner = userRepository.findById(userId).orElse(null);
         if (owner == null) {
             throw new DataNotFoundException("User not found");
         }
-        itemDto.setOwnerId(UserMapper.INSTANCE.toUser(owner).getId());
-        Item newItem = ItemMapper.INSTANCE.toItem(itemDto);
-        storageItem.addItem(newItem);
-        return ItemMapper.INSTANCE.toItemDto(newItem);
+        itemDto.setOwner(owner.getId());
+        Item newItem = itemMapper.toItem(itemDto);
+        newItem.setOwner(owner);
+        itemRepository.save(newItem);
+        return itemMapper.toItemDto(newItem);
     }
 
     @Override
     public ItemDto editItem(long itemId, ItemDto itemDto) {
-        Item existingItem = storageItem.getItemById(itemId);
-        if (existingItem == null) {
+        Optional <Item> existingItem = itemRepository.findById(itemId);
+        if (!existingItem.isPresent()) {
             throw new DataNotFoundException("Item not found");
         }
 
-        if (existingItem.getOwnerId() != itemDto.getOwnerId()) {
+        if (existingItem.get().getOwner().getId()!= (itemDto.getOwner())) {
             throw new DataNotFoundException("User is not the owner of the item");
         }
 
-        if (itemDto.getName() != null) existingItem.setName(itemDto.getName());
-        if (itemDto.getDescription() != null) existingItem.setDescription(itemDto.getDescription());
-        if (itemDto.getAvailable() != null) existingItem.setAvailable(itemDto.getAvailable().booleanValue());
+        if (itemDto.getName() != null) {
+            existingItem.get().setName(itemDto.getName());
+        }
+        if (itemDto.getDescription() != null) {
+            existingItem.get().setDescription(itemDto.getDescription());
+        }
+        if (itemDto.getAvailable() != null) {
+            existingItem.get().setAvailable(itemDto.getAvailable());
+        }
 
-        storageItem.updateItem(existingItem);
+        itemRepository.save(existingItem.get());
 
-        return ItemMapper.INSTANCE.toItemDto(existingItem);
+        return itemMapper.toItemDto(existingItem.get());
     }
 
     @Override
     public ItemDto getItemById(long itemId) {
-        Item item = storageItem.getItemById(itemId);
+        Item item = itemRepository.findById(itemId).orElse(null);
         if (item == null) {
             throw new DataNotFoundException("Item not found");
         }
 
-        return ItemMapper.INSTANCE.toItemDto(item);
+        return itemMapper.toItemDto(item);
     }
 
     @Override
     public List<ItemDto> getItemsByOwnerId(long ownerId) {
-        List<Item> ownerItems = storageItem.getItemsByOwnerId(ownerId);
-        return ownerItems.stream()
-            .map(ItemMapper.INSTANCE::toItemDto)
-            .collect(Collectors.toList());
+        return itemMapper.toItemDtoList(itemRepository.findByOwnerIdOrderByIdAsc(ownerId));
     }
 
     @Override
     public List<ItemDto> searchItems(String searchText) {
-        List<Item> foundItems = storageItem.searchItems(searchText);
-        return foundItems.stream()
-            .map(ItemMapper.INSTANCE::toItemDto)
-            .collect(Collectors.toList());
+        return
+            itemMapper.toItemDtoList(itemRepository.search(searchText));
     }
 }

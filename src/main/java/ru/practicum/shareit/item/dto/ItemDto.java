@@ -1,16 +1,15 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemDto {
     private Long id;
     @NotEmpty
@@ -20,6 +19,8 @@ public class ItemDto {
     @NotNull
     private Boolean available;
     @NotNull
-    private long ownerId;
+    private long owner;
     private Long requestId;
+    Long request;
+
 }

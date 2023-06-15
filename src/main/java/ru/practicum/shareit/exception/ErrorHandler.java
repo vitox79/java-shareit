@@ -8,8 +8,20 @@ import ru.practicum.shareit.exception.model.DataNotFoundException;
 import ru.practicum.shareit.exception.model.ErrorResponse;
 import ru.practicum.shareit.exception.model.NotFoundException;
 
+import javax.validation.ValidationException;
+import java.util.Map;
+
 @RestControllerAdvice
 public class ErrorHandler {
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleValidationException(final ValidationException e) {
+        return new ErrorResponse(
+            String.format(e.getMessage())
+        );
+
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectParameterException(final NotFoundException e) {

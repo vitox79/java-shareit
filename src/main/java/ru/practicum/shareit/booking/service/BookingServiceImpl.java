@@ -1,64 +1,84 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.booking.status.Status;
 import ru.practicum.shareit.exception.model.NotFoundException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
-@AllArgsConstructor
-public class BookingService {
+@RequiredArgsConstructor
+public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
+    private final BookingMapper bookingMapper;
 
-    private BookingMapper bookingMapper;
-
-    public Booking createBooking(long userId, BookingDto bookingDto) {
-        return bookingRepository.save(bookingMapper.toBooking(bookingDto));
+    @Override
+    public BookingDto create(long userId, BookingDto bookingDto) {
+        Booking booking = bookingMapper.toBooking(bookingDto);
+        booking.getBooker().setId(userId);
+        return bookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
-    public Booking updateBookingStatus(Long bookingId, boolean approved) {
+    @Override
+    public BookingDto update(long userId, long bookingId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
             .orElseThrow(() -> new NotFoundException("Booking not found with id: " + bookingId));
 
-        if (approved) {
-            booking.setStatus(Booking.Status.APPROVED);
-        } else {
-            booking.setStatus(Booking.Status.REJECTED);
+        if (booking.getBooker().getId() != userId) {
+            throw new NotFoundException("You are not authorized to update this booking.");
         }
 
-        return bookingRepository.save(booking);
+        booking.setStatus(approved != null && approved ? Status.APPROVED : Status.REJECTED);
+
+        return bookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
-    public Booking getBookingDetails(Long bookingId) {
-        return bookingRepository.findById(bookingId)
+    @Override
+    public BookingDto getById(long userId, long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
             .orElseThrow(() -> new NotFoundException("Booking not found with id: " + bookingId));
-    }
 
-    public List<Booking> getUserBookings(Booking.Status state) {
-        // If state is null, retrieve all bookings
-        if (state == null) {
-            return bookingRepository.findAllByBookerId(getCurrentUserId());
+        if (booking.getBooker().getId() != userId) {
+            throw new NotFoundException("You are not authorized to access this booking.");
         }
 
-        return bookingRepository.findAllByBookerIdAndStatus(getCurrentUserId(), state);
+        return bookingMapper.toBookingDto(booking);
     }
 
-    public List<Booking> getOwnerBookings(Booking.Status state) {
-        // If state is null, retrieve all bookings
-        if (state == null) {
-            return bookingRepository.findAllByOwnerId(getCurrentUserId());
+    @Override
+    public List<BookingDto> getAllByUser(long userId, String state) {
+        List<Booking> bookings;
+        if ("ALL".equalsIgnoreCase(state)) {
+            bookings = bookingRepository.findAllByBookerId(userId);
+        } else {
+            Status bookingStatus = Status.valueOf(state.toUpperCase());
+            bookings = bookingRepository.findAllByBookerIdAndStatus(userId, bookingStatus);
         }
 
-        return bookingRepository.findAllByOwnerIdAndStatus(getCurrentUserId(), state);
+        return bookings.stream()
+            .map(bookingMapper::toBookingDto)
+            .collect(Collectors.toList());
     }
 
-    // Helper method to get the current user's ID
-    private Long getCurrentUserId() {
-        // Implement the logic to retrieve the current user's ID
-        // This can vary based on your authentication and session management approach
-        // Replace this with your actual
+    @Override
+    public List<BookingDto> getAllByOwner(long ownerId, String state) {
+        List<Booking> bookings;
+        if ("ALL".equalsIgnoreCase(state)) {
+            bookings = bookingRepository.findAllByOwnerId(ownerId);
+        } else {
+            Status bookingStatus = Status.valueOf(state.toUpperCase());
+            bookings = bookingRepository.findAllByOwnerIdAndStatus(ownerId, bookingStatus);
+        }
+
+        return bookings.stream()
+            .map(bookingMapper::toBookingDto)
+            .collect(Collectors.toList());
     }
 }
