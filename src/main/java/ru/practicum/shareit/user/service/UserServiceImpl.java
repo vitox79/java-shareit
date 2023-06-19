@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     public User updateUser(long userId, User updatedUser) {
         User user = repository.findById(userId).orElse(null);
         if (user == null) {
-            throw new DataNotFoundException("Ures not found");
+            throw new DataNotFoundException("User not found");
         }
         if (updatedUser.getName() != null) {
             user.setName(updatedUser.getName());

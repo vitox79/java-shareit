@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.model.NotFoundException;
+import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -47,14 +48,13 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable long itemId) {
-
-        return itemService.getItemById(itemId);
+    public ItemDto getItemById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId, @PathVariable long itemId) {
+        return itemService.getItemById(userId, itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getItemsByOwnerId(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long ownerId) {
-        return itemService.getItemsByOwnerId(ownerId);
+    public List<ItemDto> getItemsById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long ownerId) {
+        return itemService.getItemsById(ownerId);
     }
 
     @GetMapping("/search")
@@ -62,5 +62,10 @@ public class ItemController {
         if (searchText.isEmpty()) return new ArrayList<ItemDto>();
         return itemService.searchItems(searchText);
     }
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId, @Valid @RequestBody CommentDto commentDto) {
+        return itemService.addComment(userId, itemId, commentDto);
+    }
+
 
 }

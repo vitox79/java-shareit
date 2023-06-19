@@ -5,6 +5,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,17 @@ public class ItemMapper {
             .available(item.isAvailable())
             .build();
     }
+    public ItemDto toInfoItemDto(Item item) {
+        return ItemDto.builder()
+            .id(item.getId())
+            .owner(item.getOwner().getId())
+            .name(item.getName())
+            .description(item.getDescription())
+            .available(item.isAvailable())
+            .comments(new ArrayList<>())
+            .build();
+    }
+
 
     public Item toItem(ItemDto itemDto) {
         return Item.builder()

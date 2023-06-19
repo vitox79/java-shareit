@@ -2,9 +2,6 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.model.DataNotFoundException;
@@ -28,14 +25,12 @@ public class UserController {
 
 
     @PostMapping
-    public UserDto createUser(@Valid @RequestBody UserDto userDto/*, BindingResult bindingResult*/) {
-     /*   if (bindingResult.hasErrors()) {
+    public UserDto createUser(@Valid @RequestBody UserDto userDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             log.error("Invalid item data");
             throw new NotFoundException("Invalid user data");
-        }*/
-        System.out.println(userDto);
+        }
         User createdUser = userMapper.toUser(userDto);
-        System.out.println(createdUser);
         return userMapper.toUserDto(userService.createUser(createdUser));
     }
 
