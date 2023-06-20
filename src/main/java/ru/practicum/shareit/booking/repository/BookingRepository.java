@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    
+
     List<Booking> findAllByBookerIdOrderByStartDesc(Long bookerId);
 
     List<Booking> findByBookerIdAndStatusIsOrderByStartDesc(long userId, Status waiting);
