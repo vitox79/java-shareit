@@ -12,28 +12,7 @@ import java.util.Set;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findAllByBookerIdOrderByStartDesc(Long bookerId);
-
-    @Query("select b from Booking b " +
-        "left join Item i on i.id = b.item " +
-        "left join User u on i.owner = u.id " +
-        "where u.id = ?1 and b.status in (?2) " +
-        "order by b.start desc")
-    List<Booking> findAllByBookerIdAndStatus(Long bookerId, Status status);
-
-    @Query("select b from Booking b " +
-        "left join Item i on i.id = b.item " +
-        "left join User u on i.owner = u.id " +
-        "where u.id = ?1 " +
-        "order by b.start desc")
-    List<Booking> findAllByOwnerId(Long ownerId);
-
-    @Query("select b from Booking b " +
-        "left join Item i on i.id = b.item " +
-        "left join User u on i.owner = u.id " +
-        "where u.id = ?1 and b.status = ?2 " +
-        "order by b.start desc")
-    List<Booking> findAllByOwnerIdAndStatus(Long ownerId, Status status);
-
+    
     List<Booking> findByBookerIdAndStatusIsOrderByStartDesc(long userId, Status waiting);
 
     List<Booking> findByBookerIdAndEndBeforeOrderByStartDesc(long userId, LocalDateTime now);
