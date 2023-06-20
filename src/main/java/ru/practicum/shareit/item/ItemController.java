@@ -62,6 +62,7 @@ public class ItemController {
         if (searchText.isEmpty()) return new ArrayList<ItemDto>();
         return itemService.searchItems(searchText);
     }
+
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId, @Valid @RequestBody CommentDto commentDto) {
         return itemService.addComment(userId, itemId, commentDto);

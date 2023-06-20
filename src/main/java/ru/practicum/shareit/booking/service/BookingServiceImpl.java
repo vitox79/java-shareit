@@ -65,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto update(long userId, long bookingId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
             .orElseThrow(() -> new NotFoundException("Booking not found with id: " + bookingId));
-        if (approved == null ){
+        if (approved == null) {
             throw new NotFoundException("approved is null");
         }
         if (booking.getItem().getOwner().getId() == userId) {

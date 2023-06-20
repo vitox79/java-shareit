@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ItemRequestController {
     @RequestMapping("/add-item")
     public String addItem() {
-        return "Item added";
+        return "true";
     }
 }

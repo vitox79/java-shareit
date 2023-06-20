@@ -23,6 +23,7 @@ public class UserMapper {
             .email(user.getEmail())
             .build();
     }
+
     public List<UserDto> toItemDtoList(List<User> users) {
         return users.stream()
             .map(this::toUserDto)
