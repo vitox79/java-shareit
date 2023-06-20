@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.State;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -98,7 +99,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getAllByUser(long userId, String state) {
+    public List<BookingDto> getAllByUser(long userId, State state) {
         Optional<User> user = repositoryUser.findById(userId);
         if (user.isEmpty()) {
             throw new DataNotFoundException("User not found");
@@ -106,28 +107,27 @@ public class BookingServiceImpl implements BookingService {
 
         List<Booking> bookings;
 
-        String stateUpperCase = state.toUpperCase();
-        switch (stateUpperCase) {
-            case "ALL":
+        switch (state) {
+            case ALL:
                 bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
                 break;
-            case "CURRENT":
+            case CURRENT:
                 LocalDateTime now = LocalDateTime.now();
                 bookings =
                     bookingRepository.findByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId, now, now);
                 break;
-            case "PAST":
+            case PAST:
                 bookings =
                     bookingRepository.findByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
                 break;
-            case "FUTURE":
+            case FUTURE:
                 bookings = bookingRepository.findByBookerIdAndStatusInOrderByStartDesc(userId,
                     Set.of(Status.WAITING, Status.APPROVED));
                 break;
-            case "WAITING":
+            case WAITING:
                 bookings = bookingRepository.findByBookerIdAndStatusIsOrderByStartDesc(userId, Status.WAITING);
                 break;
-            case "REJECTED":
+            case REJECTED:
                 bookings = bookingRepository.findByBookerIdAndStatusIsOrderByStartDesc(userId, Status.REJECTED);
                 break;
             default:
@@ -140,29 +140,29 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getAllByOwner(long ownerId, String state) {
+    public List<BookingDto> getAllByOwner(long ownerId, State state) {
         Optional<User> user = repositoryUser.findById(ownerId);
         if (user.isEmpty()) {
             throw new DataNotFoundException("user not found");
         }
         List<Booking> bookings;
         switch (state) {
-            case "ALL":
-                bookings = bookingRepository.findByOwnerId(ownerId);
+            case ALL:
+                bookings = bookingRepository.findByItem_OwnerIdOrderByStartDesc(ownerId);
                 break;
-            case "REJECTED":
+            case REJECTED:
                 bookings = bookingRepository.findByOwnerIdAndStatus(ownerId, Status.REJECTED);
                 break;
-            case "FUTURE":
+            case FUTURE:
                 bookings = bookingRepository.findByOwnerIdAndStatusIn(ownerId, Set.of(Status.WAITING, Status.APPROVED));
                 break;
-            case "PAST":
+            case PAST:
                 bookings = bookingRepository.findByOwnerIdPast(ownerId, LocalDateTime.now());
                 break;
-            case "WAITING":
+            case WAITING:
                 bookings = bookingRepository.findByOwnerIdAndStatus(ownerId, Status.WAITING);
                 break;
-            case "CURRENT":
+            case CURRENT:
                 bookings = bookingRepository.findByOwnerIdCurrent(ownerId, LocalDateTime.now());
                 break;
 
