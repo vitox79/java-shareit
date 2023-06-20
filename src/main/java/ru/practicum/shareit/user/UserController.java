@@ -37,7 +37,7 @@ public class UserController {
     @GetMapping("/{userId}")
     public UserDto getUser(@PathVariable long userId) {
         User user = userService.getUserById(userId);
-        if (user == null){
+        if (user == null) {
             throw new DataNotFoundException("User not found");
         }
         return userMapper.toUserDto(user);
