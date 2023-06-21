@@ -29,7 +29,6 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
-    private final BookingMapper bookingMapper;
 
     private final RepositoryUser repositoryUser;
 
@@ -37,7 +36,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto create(long userId, BookingDto bookingDto) {
-        Booking booking = bookingMapper.toBooking(bookingDto);
+        Booking booking = BookingMapper.toBooking(bookingDto);
         Optional<User> user = repositoryUser.findById(userId);
         Optional<Item> item = repositoryItem.findById(bookingDto.getItemId());
 
@@ -58,7 +57,7 @@ public class BookingServiceImpl implements BookingService {
         } else {
             throw new NotFoundException("Item is not available");
         }
-        return bookingMapper.toBookingDto(bookingRepository.save(booking));
+        return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
     @Override
@@ -79,7 +78,7 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);
 
-        return bookingMapper.toBookingDto(bookingRepository.save(booking));
+        return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
     @Override
@@ -95,7 +94,7 @@ public class BookingServiceImpl implements BookingService {
             throw new DataNotFoundException("You are not authorized to view this booking.");
         }
 
-        return bookingMapper.toBookingDto(booking);
+        return BookingMapper.toBookingDto(booking);
     }
 
     @Override
@@ -135,7 +134,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         return bookings.stream()
-            .map(bookingMapper::toBookingDto)
+            .map(BookingMapper::toBookingDto)
             .collect(Collectors.toList());
     }
 
@@ -171,7 +170,7 @@ public class BookingServiceImpl implements BookingService {
         }
         return bookings
             .stream()
-            .map(bookingMapper::toBookingDto)
+            .map(BookingMapper::toBookingDto)
             .collect(toList());
     }
 

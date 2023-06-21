@@ -21,8 +21,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
-
 
     @PostMapping
     public UserDto createUser(@Valid @RequestBody UserDto userDto, BindingResult bindingResult) {
@@ -30,8 +28,8 @@ public class UserController {
             log.error("Invalid item data");
             throw new NotFoundException("Invalid user data");
         }
-        User createdUser = userMapper.toUser(userDto);
-        return userMapper.toUserDto(userService.createUser(createdUser));
+        User createdUser = UserMapper.toUser(userDto);
+        return UserMapper.toUserDto(userService.createUser(createdUser));
     }
 
     @GetMapping("/{userId}")
@@ -40,13 +38,13 @@ public class UserController {
         if (user == null) {
             throw new DataNotFoundException("User not found");
         }
-        return userMapper.toUserDto(user);
+        return UserMapper.toUserDto(user);
     }
 
     @PatchMapping("/{userId}")
     public UserDto updateUser(@PathVariable long userId, @RequestBody UserDto userDto) {
-        User updatedUser = userService.updateUser(userId, userMapper.toUser(userDto));
-        return userMapper.toUserDto(updatedUser);
+        User updatedUser = userService.updateUser(userId, UserMapper.toUser(userDto));
+        return UserMapper.toUserDto(updatedUser);
     }
 
     @DeleteMapping("/{userId}")
@@ -57,7 +55,7 @@ public class UserController {
     @GetMapping
     public List<UserDto> getAllUsers() {
         List<User> users = userService.getAllUsers();
-        return userMapper.toItemDtoList(users);
+        return UserMapper.toItemDtoList(users);
     }
 
 }

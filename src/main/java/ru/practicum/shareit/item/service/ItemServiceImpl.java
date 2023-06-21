@@ -33,14 +33,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final BookingRepository bookingRepository;
     private final RepositoryUser userRepository;
-
     private final CommentRepository commentRepository;
-
-    private final ItemMapper itemMapper;
-
-    private final BookingMapper bookingMapper;
-
-    private final CommentMapper commentMapper;
 
 
     @Override
@@ -50,16 +43,16 @@ public class ItemServiceImpl implements ItemService {
             throw new DataNotFoundException("User not found");
         }
         itemDto.setOwner(owner.getId());
-        Item newItem = itemMapper.toItem(itemDto);
+        Item newItem = ItemMapper.toItem(itemDto);
         newItem.setOwner(owner);
         itemRepository.save(newItem);
-        return itemMapper.toItemDto(newItem);
+        return ItemMapper.toItemDto(newItem);
     }
 
     @Override
     public ItemDto editItem(long itemId, ItemDto itemDto) {
         Optional<Item> existingItem = itemRepository.findById(itemId);
-        if (!existingItem.isPresent()) {
+        if (existingItem.isEmpty()) {
             throw new DataNotFoundException("Item not found");
         }
 
@@ -79,7 +72,7 @@ public class ItemServiceImpl implements ItemService {
 
         itemRepository.save(existingItem.get());
 
-        return itemMapper.toItemDto(existingItem.get());
+        return ItemMapper.toItemDto(existingItem.get());
     }
 
 
@@ -89,18 +82,18 @@ public class ItemServiceImpl implements ItemService {
         if (item == null) {
             throw new DataNotFoundException("Item not found");
         }
-        ItemDto itemDto = itemMapper.toInfoItemDto(item);
+        ItemDto itemDto = ItemMapper.toInfoItemDto(item);
         if (item.getOwner().getId().equals(userId)) {
             bookingRepository.findFirst1ByItemIdAndStartBeforeOrderByStartDesc(itemId, LocalDateTime.now())
-                .ifPresent(booking -> itemDto.setLastBooking(bookingMapper.toItemsBookingDto(booking)));
+                .ifPresent(booking -> itemDto.setLastBooking(BookingMapper.toItemsBookingDto(booking)));
 
             bookingRepository.findFirst1ByItemIdAndStartAfterAndStatusNotLikeOrderByStartAsc(itemId,
                     LocalDateTime.now(), Status.REJECTED)
-                .ifPresent(booking -> itemDto.setNextBooking(bookingMapper.toItemsBookingDto(booking)));
+                .ifPresent(booking -> itemDto.setNextBooking(BookingMapper.toItemsBookingDto(booking)));
         }
         itemDto.setComments(commentRepository.findAllByItemId(item.getId()).orElse(List.of())
             .stream()
-            .map(commentMapper::toCommentDto)
+            .map(CommentMapper::toCommentDto)
             .collect(toList()));
 
 
@@ -112,16 +105,16 @@ public class ItemServiceImpl implements ItemService {
         List<Item> items = itemRepository.findByOwnerIdOrderByIdAsc(ownerId);
         List<ItemDto> itemsDto = new ArrayList<>();
         for (Item item : items) {
-            ItemDto itemDto = itemMapper.toItemDto(item);
+            ItemDto itemDto = ItemMapper.toItemDto(item);
             bookingRepository.findFirst1ByItemIdAndStartBeforeOrderByStartDesc(item.getId(), LocalDateTime.now())
-                .ifPresent(booking -> itemDto.setLastBooking(bookingMapper.toItemsBookingDto(booking)));
+                .ifPresent(booking -> itemDto.setLastBooking(BookingMapper.toItemsBookingDto(booking)));
             bookingRepository.findFirst1ByItemIdAndStartAfterAndStatusNotLikeOrderByStartAsc(item.getId(),
                     LocalDateTime.now(), Status.REJECTED)
-                .ifPresent(booking -> itemDto.setNextBooking(bookingMapper.toItemsBookingDto(booking)));
+                .ifPresent(booking -> itemDto.setNextBooking(BookingMapper.toItemsBookingDto(booking)));
 
             itemDto.setComments(commentRepository.findAllByItemId(item.getId()).orElse(List.of())
                 .stream()
-                .map(commentMapper::toCommentDto)
+                .map(CommentMapper::toCommentDto)
                 .collect(toList()));
 
             itemsDto.add(itemDto);
@@ -132,7 +125,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> searchItems(String searchText) {
         return
-            itemMapper.toItemDtoList(itemRepository.search(searchText));
+            ItemMapper.toItemDtoList(itemRepository.search(searchText));
     }
 
     @Override
@@ -142,9 +135,9 @@ public class ItemServiceImpl implements ItemService {
                 Status.REJECTED);
         if (bookings.isPresent() && !bookings.get().isEmpty()) {
             Comment comment =
-                commentMapper.toComment(userRepository.findById(userId).get(), itemRepository.findById(itemId).get(),
+                CommentMapper.toComment(userRepository.findById(userId).get(), itemRepository.findById(itemId).get(),
                     commentDto, LocalDateTime.now());
-            return commentMapper.toCommentDto(commentRepository.save(comment));
+            return CommentMapper.toCommentDto(commentRepository.save(comment));
         } else {
             throw new ValidationException(
                 "You did not reserve this item, or the reservation period has not expired yet.");
