@@ -40,7 +40,7 @@ public class ItemMapper {
 
     public static List<ItemDto> toItemDtoList(List<Item> items) {
         return items.stream()
-            .map(ItemMapper ::toItemDto)
+            .map(ItemMapper::toItemDto)
             .collect(Collectors.toList());
     }
 }
