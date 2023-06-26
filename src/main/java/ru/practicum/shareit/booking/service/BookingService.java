@@ -2,11 +2,12 @@ package ru.practicum.shareit.booking.service;
 
 import ru.practicum.shareit.booking.State;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 
 import java.util.List;
 
 public interface BookingService {
-    BookingDto create(long userId, BookingDto bookingDto);
+    BookingDto create(long userId, BookingRequestDto bookingDto);
 
     BookingDto update(long userId, long bookingId, Boolean approved);
 

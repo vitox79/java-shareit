@@ -25,7 +25,8 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto addItem(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId, @Valid @RequestBody ItemDto itemDto, BindingResult bindingResult) {
+    public ItemDto addItem(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
+                           @Valid @RequestBody ItemDto itemDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             log.error("Invalid item data");
             throw new NotFoundException("Invalid item data");
@@ -39,7 +40,8 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto editItem(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId, @PathVariable long itemId, @RequestBody ItemDto itemDto, BindingResult bindingResult) {
+    public ItemDto editItem(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
+                            @PathVariable long itemId, @RequestBody ItemDto itemDto, BindingResult bindingResult) {
         if (userId == null) {
             throw new NotFoundException("\"X-Sharer-User-Id not exist");
         }
@@ -48,7 +50,8 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId, @PathVariable long itemId) {
+    public ItemDto getItemById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
+                               @PathVariable long itemId) {
         return itemService.getItemById(userId, itemId);
     }
 
@@ -64,7 +67,8 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId, @Valid @RequestBody CommentDto commentDto) {
+    public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId,
+                                    @Valid @RequestBody CommentDto commentDto) {
         return itemService.addComment(userId, itemId, commentDto);
     }
 

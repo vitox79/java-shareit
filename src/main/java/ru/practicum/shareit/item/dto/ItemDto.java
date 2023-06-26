@@ -11,15 +11,17 @@ import java.util.List;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemDto {
-    private Long id;
+    Long id;
     @NotEmpty
-    private String name;
+    String name;
     @NotEmpty
-    private String description;
+    String description;
     @NotNull
-    private Boolean available;
+    Boolean available;
     @NotNull
     long owner;
     Long request;

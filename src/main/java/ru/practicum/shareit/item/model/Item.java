@@ -7,12 +7,14 @@ import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "items")
-@Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Item {
     @Id

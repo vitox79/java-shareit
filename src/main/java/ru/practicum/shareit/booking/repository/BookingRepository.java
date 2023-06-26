@@ -1,9 +1,11 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.status.Status;
+import ru.practicum.shareit.item.model.Item;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -60,6 +62,23 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         "where u.id = ?1 and b.end < ?2 " +
         "order by b.start desc")
     List<Booking> findByOwnerIdPast(long ownerId, LocalDateTime now);
+
+    @Query("SELECT b FROM Booking b " +
+        "JOIN FETCH b.item " +
+        "WHERE b.status != 'REJECTED' " +
+        "AND b.item IN :items " +
+        "AND b.start > :now " +
+        "ORDER BY b.start DESC, b.id DESC")
+    List<Booking> findApprovedNextForItems(List<Item> items, Sort sort, LocalDateTime now);
+
+    @Query("SELECT b FROM Booking b " +
+        "JOIN FETCH b.item " +
+        "WHERE b.status != 'REJECTED' " +
+        "AND b.item IN :items " +
+        "AND b.start < :now " +
+        "ORDER BY b.start DESC, b.id DESC")
+    List<Booking> findApprovedLastForItems(List<Item> items, Sort sort, LocalDateTime now);
+
 }
 
 

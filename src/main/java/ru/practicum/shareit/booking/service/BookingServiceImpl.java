@@ -5,12 +5,12 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.State;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.status.Status;
 import ru.practicum.shareit.exception.model.DataNotFoundException;
 import ru.practicum.shareit.exception.model.NotFoundException;
-import ru.practicum.shareit.exception.model.UnknownArgumentException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
@@ -18,6 +18,7 @@ import ru.practicum.shareit.user.repository.RepositoryUser;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,8 +36,7 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository repositoryItem;
 
     @Override
-    public BookingDto create(long userId, BookingDto bookingDto) {
-        Booking booking = BookingMapper.toBooking(bookingDto);
+    public BookingDto create(long userId, BookingRequestDto bookingDto) {
         Optional<User> user = repositoryUser.findById(userId);
         Optional<Item> item = repositoryItem.findById(bookingDto.getItemId());
 
@@ -47,17 +47,16 @@ public class BookingServiceImpl implements BookingService {
             throw new DataNotFoundException("item not found");
         }
         if (item.get().isAvailable()) {
-            booking.setItem(item.get());
-            booking.setBooker(user.get());
-            timeValidation(booking.getStart(), booking.getEnd());
+            timeValidation(bookingDto.getStart(), bookingDto.getEnd());
+            Booking booking = BookingMapper.toBooking(bookingDto, item.get(), user.get());
             if (booking.getItem().getOwner().getId() == userId) {
                 throw new DataNotFoundException("Booking is not available. You are owner.");
             }
-            booking.setStatus(Status.WAITING);
+            return BookingMapper.toBookingDto(bookingRepository.save(booking));
+
         } else {
             throw new NotFoundException("Item is not available");
         }
-        return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
     @Override
@@ -104,7 +103,7 @@ public class BookingServiceImpl implements BookingService {
             throw new DataNotFoundException("User not found");
         }
 
-        List<Booking> bookings;
+        List<Booking> bookings = new ArrayList<>();
 
         switch (state) {
             case ALL:
@@ -129,8 +128,6 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 bookings = bookingRepository.findByBookerIdAndStatusIsOrderByStartDesc(userId, Status.REJECTED);
                 break;
-            default:
-                throw new UnknownArgumentException("Unknown state: " + state);
         }
 
         return bookings.stream()
@@ -144,7 +141,7 @@ public class BookingServiceImpl implements BookingService {
         if (user.isEmpty()) {
             throw new DataNotFoundException("user not found");
         }
-        List<Booking> bookings;
+        List<Booking> bookings = new ArrayList<>();
         switch (state) {
             case ALL:
                 bookings = bookingRepository.findByItem_OwnerIdOrderByStartDesc(ownerId);
@@ -164,9 +161,6 @@ public class BookingServiceImpl implements BookingService {
             case CURRENT:
                 bookings = bookingRepository.findByOwnerIdCurrent(ownerId, LocalDateTime.now());
                 break;
-
-            default:
-                throw new UnknownArgumentException("Unknown state: " + state);
         }
         return bookings
             .stream()

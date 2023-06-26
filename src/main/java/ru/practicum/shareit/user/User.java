@@ -5,12 +5,14 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "users")
-@Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id

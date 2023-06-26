@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -22,7 +23,9 @@ import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -78,6 +81,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItemById(long userId, long itemId) {
+
         Item item = itemRepository.findById(itemId).orElse(null);
         if (item == null) {
             throw new DataNotFoundException("Item not found");
@@ -85,11 +89,11 @@ public class ItemServiceImpl implements ItemService {
         ItemDto itemDto = ItemMapper.toInfoItemDto(item);
         if (item.getOwner().getId().equals(userId)) {
             bookingRepository.findFirst1ByItemIdAndStartBeforeOrderByStartDesc(itemId, LocalDateTime.now())
-                .ifPresent(booking -> itemDto.setLastBooking(BookingMapper.toItemsBookingDto(booking)));
+                .ifPresent(booking -> itemDto.setLastBooking(BookingMapper.toBookingInfoDto(booking)));
 
             bookingRepository.findFirst1ByItemIdAndStartAfterAndStatusNotLikeOrderByStartAsc(itemId,
                     LocalDateTime.now(), Status.REJECTED)
-                .ifPresent(booking -> itemDto.setNextBooking(BookingMapper.toItemsBookingDto(booking)));
+                .ifPresent(booking -> itemDto.setNextBooking(BookingMapper.toBookingInfoDto(booking)));
         }
         itemDto.setComments(commentRepository.findAllByItemId(item.getId()).orElse(List.of())
             .stream()
@@ -102,23 +106,53 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getItemsById(long ownerId) {
+
         List<Item> items = itemRepository.findByOwnerIdOrderByIdAsc(ownerId);
+
+        Map<Item, List<Comment>> comments =
+            commentRepository.findByItemInOrderByCreatedDesc(items, Sort.by(Sort.Direction.DESC, "created"))
+                .stream()
+                .collect(Collectors.groupingBy(Comment::getItem, Collectors.toList()));
+
+        Map<Item, List<Booking>> nextBookings =
+            bookingRepository.findApprovedNextForItems(items, Sort.by(Sort.Direction.DESC, "start"),
+                    LocalDateTime.now())
+                .stream()
+                .collect(Collectors.groupingBy(Booking::getItem, Collectors.toList()));
+
+        Map<Item, List<Booking>> lastBookings =
+            bookingRepository.findApprovedLastForItems(items, Sort.by(Sort.Direction.DESC, "start"),
+                    LocalDateTime.now())
+                .stream()
+                .collect(Collectors.groupingBy(Booking::getItem, Collectors.toList()));
+
+
         List<ItemDto> itemsDto = new ArrayList<>();
+
         for (Item item : items) {
             ItemDto itemDto = ItemMapper.toItemDto(item);
-            bookingRepository.findFirst1ByItemIdAndStartBeforeOrderByStartDesc(item.getId(), LocalDateTime.now())
-                .ifPresent(booking -> itemDto.setLastBooking(BookingMapper.toItemsBookingDto(booking)));
-            bookingRepository.findFirst1ByItemIdAndStartAfterAndStatusNotLikeOrderByStartAsc(item.getId(),
-                    LocalDateTime.now(), Status.REJECTED)
-                .ifPresent(booking -> itemDto.setNextBooking(BookingMapper.toItemsBookingDto(booking)));
 
-            itemDto.setComments(commentRepository.findAllByItemId(item.getId()).orElse(List.of())
-                .stream()
-                .map(CommentMapper::toCommentDto)
-                .collect(toList()));
+            if (lastBookings.get(item) != null && !lastBookings.get(item).isEmpty()) {
+                Booking lastBooking = lastBookings.get(item).get(0);
+                itemDto.setLastBooking(BookingMapper.toBookingInfoDto(lastBooking));
+            }
+
+            if (nextBookings.get(item) != null && nextBookings.get(item).size() > 1) {
+                Booking nextBooking = nextBookings.get(item).get(1);
+                itemDto.setNextBooking(BookingMapper.toBookingInfoDto(nextBooking));
+            }
+
+            List<Comment> itemComments = comments.get(item);
+            if (itemComments != null && !itemComments.isEmpty()) {
+                List<CommentDto> commentDto = itemComments.stream()
+                    .map(CommentMapper::toCommentDto)
+                    .collect(Collectors.toList());
+                itemDto.setComments(commentDto);
+            }
 
             itemsDto.add(itemDto);
         }
+
         return itemsDto;
     }
 
