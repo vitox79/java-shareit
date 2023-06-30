@@ -16,6 +16,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.RepositoryUser;
 
@@ -38,6 +40,7 @@ public class ItemServiceImpl implements ItemService {
     private final RepositoryUser userRepository;
     private final CommentRepository commentRepository;
 
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
@@ -48,8 +51,11 @@ public class ItemServiceImpl implements ItemService {
         itemDto.setOwner(owner.getId());
         Item newItem = ItemMapper.toItem(itemDto);
         newItem.setOwner(owner);
+        if (itemDto.getRequestId() != null) {
+            newItem.setRequest(getRequestById(itemDto.getRequestId()));
+        }
         itemRepository.save(newItem);
-        return ItemMapper.toItemDto(newItem);
+        return ItemMapper.toInfoItemDto(newItem);
     }
 
     @Override
@@ -177,5 +183,15 @@ public class ItemServiceImpl implements ItemService {
                 "You did not reserve this item, or the reservation period has not expired yet.");
         }
     }
+
+    @Override
+    public ItemRequest getRequestById(long requestId) {
+        if (requestId < 0) {
+            throw new DataNotFoundException("Id should be positive.");
+        }
+        Optional<ItemRequest> optional = itemRequestRepository.findById(requestId);
+        return optional.orElseThrow(() -> new DataNotFoundException(String.format("Id not found.", requestId)));
+    }
+
 
 }

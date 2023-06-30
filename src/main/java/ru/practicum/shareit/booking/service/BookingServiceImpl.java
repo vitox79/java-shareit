@@ -46,17 +46,18 @@ public class BookingServiceImpl implements BookingService {
         if (item.isEmpty()) {
             throw new DataNotFoundException("item not found");
         }
-        if (item.get().isAvailable()) {
-            timeValidation(bookingDto.getStart(), bookingDto.getEnd());
-            Booking booking = BookingMapper.toBooking(bookingDto, item.get(), user.get());
-            if (booking.getItem().getOwner().getId() == userId) {
-                throw new DataNotFoundException("Booking is not available. You are owner.");
-            }
-            return BookingMapper.toBookingDto(bookingRepository.save(booking));
-
-        } else {
+        if (!item.get().isAvailable()) {
             throw new NotFoundException("Item is not available");
         }
+
+        timeValidation(bookingDto.getStart(), bookingDto.getEnd());
+        Booking booking = BookingMapper.toBooking(bookingDto, item.get(), user.get());
+        if (booking.getItem().getOwner().getId() == userId) {
+            throw new DataNotFoundException("Booking is not available. You are owner.");
+        }
+        return BookingMapper.toBookingDto(bookingRepository.save(booking));
+
+
     }
 
     @Override
@@ -103,7 +104,7 @@ public class BookingServiceImpl implements BookingService {
             throw new DataNotFoundException("User not found");
         }
 
-        List<Booking> bookings = new ArrayList<>();
+        List<Booking> bookings;
 
         switch (state) {
             case ALL:
@@ -127,6 +128,9 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case REJECTED:
                 bookings = bookingRepository.findByBookerIdAndStatusIsOrderByStartDesc(userId, Status.REJECTED);
+                break;
+            default:
+                bookings = new ArrayList<>();
                 break;
         }
 
