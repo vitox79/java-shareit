@@ -7,9 +7,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exception.model.DataNotFoundException;
 import ru.practicum.shareit.exception.model.ErrorResponse;
 import ru.practicum.shareit.exception.model.NotFoundException;
+import ru.practicum.shareit.exception.model.UnknownArgumentException;
+
+import javax.validation.ValidationException;
 
 @RestControllerAdvice
 public class ErrorHandler {
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleValidationException(final ValidationException e) {
+        return new ErrorResponse(
+            String.format(e.getMessage())
+        );
+
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectParameterException(final NotFoundException e) {
@@ -25,8 +37,8 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleIncorrectParameterException(final IllegalArgumentException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIncorrectParameterException(final UnknownArgumentException e) {
         return new ErrorResponse(
             String.format(e.getMessage())
         );

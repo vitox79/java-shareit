@@ -1,42 +1,57 @@
 package ru.practicum.shareit.user.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.exception.model.DataNotFoundException;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.repository.RepositoryUser;
+import ru.practicum.shareit.user.repository.RepositoryUser;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final RepositoryUser storageUser;
+    private final RepositoryUser repository;
 
-    public UserServiceImpl(RepositoryUser storageUser) {
-        this.storageUser = storageUser;
+
+    @Override
+    public User createUser(User user) {
+        return repository.save(user);
     }
 
     @Override
-    public UserDto createUser(User user) {
-        return storageUser.createUser(user);
+    public User getUserById(long userId) {
+        return repository.findById(userId).orElse(null);
     }
 
     @Override
-    public UserDto getUserById(long userId) {
-        return storageUser.getUserById(userId);
-    }
+    public User updateUser(long userId, User updatedUser) {
+        User user = repository.findById(userId).orElse(null);
+        if (user == null) {
+            throw new DataNotFoundException("User not found");
+        }
+        if (updatedUser.getName() != null) {
+            user.setName(updatedUser.getName());
+        }
 
-    @Override
-    public UserDto updateUser(long userId, User updatedUser) {
-        return storageUser.updateUser(userId, updatedUser);
+        if (updatedUser.getEmail() != null) {
+            user.setEmail(updatedUser.getEmail());
+        }
+
+        return repository.save(user);
     }
 
     @Override
     public void deleteUser(long userId) {
-        storageUser.deleteUser(userId);
+        if (!repository.existsById(userId)) {
+            throw new DataNotFoundException("User not found");
+        }
+        repository.deleteById(userId);
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        return storageUser.getAllUsers();
+    public List<User> getAllUsers() {
+        return repository.findAll();
     }
+
 }

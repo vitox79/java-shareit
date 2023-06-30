@@ -1,16 +1,46 @@
 package ru.practicum.shareit.item.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
-@Mapper
-public interface ItemMapper {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
-    ItemDto toItemDto(Item item);
+public class ItemMapper {
+    public static ItemDto toItemDto(Item item) {
+        return ItemDto.builder()
+            .id(item.getId())
+            .owner(item.getOwner().getId())
+            .name(item.getName())
+            .description(item.getDescription())
+            .available(item.isAvailable())
+            .build();
+    }
 
-    Item toItem(ItemDto itemDto);
+    public static ItemDto toInfoItemDto(Item item) {
+        return ItemDto.builder()
+            .id(item.getId())
+            .owner(item.getOwner().getId())
+            .name(item.getName())
+            .description(item.getDescription())
+            .available(item.isAvailable())
+            .comments(new ArrayList<>())
+            .build();
+    }
+
+    public static Item toItem(ItemDto itemDto) {
+        return Item.builder()
+            .name(itemDto.getName())
+            .description(itemDto.getDescription())
+            .available(itemDto.getAvailable())
+            .build();
+    }
+
+    public static List<ItemDto> toItemDtoList(List<Item> items) {
+        return items.stream()
+            .map(ItemMapper::toItemDto)
+            .collect(Collectors.toList());
+    }
 }

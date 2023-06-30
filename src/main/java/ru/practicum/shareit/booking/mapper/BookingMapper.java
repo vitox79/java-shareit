@@ -1,18 +1,51 @@
 package ru.practicum.shareit.booking.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingInfoDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.booking.status.Status;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.User;
 
-@Mapper
-public interface BookingMapper {
-    BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
 
-    @Mapping(target = "status", source = "booking.status")
-    BookingDto toBookingDto(Booking booking);
+public class BookingMapper {
+    public static Booking toBooking(BookingDto bookingDto) {
+        return Booking.builder()
+            .end(bookingDto.getEnd())
+            .start(bookingDto.getStart())
+            .build();
+    }
 
-    @Mapping(target = "status", source = "bookingDto.status")
-    Booking toBooking(BookingDto bookingDto);
+    public static BookingDto toBookingDto(Booking booking) {
+        return BookingDto.builder()
+            .id(booking.getId())
+            .end(booking.getEnd())
+            .start(booking.getStart())
+            .status(booking.getStatus().toString())
+            .booker(booking.getBooker())
+            .item(booking.getItem())
+            .build();
+    }
+
+    public static BookingInfoDto toBookingInfoDto(Booking booking) {
+        return BookingInfoDto.builder()
+            .id(booking.getId())
+            .bookerId(booking.getBooker().getId())
+            .build();
+    }
+
+    public static Booking toBooking(BookingRequestDto requestDto, Item item, User booker) {
+        return Booking.builder()
+            .end(requestDto.getEnd())
+            .start(requestDto.getStart())
+            .status(Status.WAITING)
+            .booker(booker)
+            .item(item)
+            .build();
+    }
+
+
 }
+
