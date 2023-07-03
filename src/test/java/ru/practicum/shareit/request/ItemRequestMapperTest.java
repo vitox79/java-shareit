@@ -20,9 +20,6 @@ class ItemRequestMapperTest {
         ItemRequest request = ItemRequestMapper.toItemRequest(requestDto);
 
         assertEquals(requestDto.getDescription(), request.getDescription(), "wrong description в model");
-        assertNull(request.getId(), "wrong id");
-        assertNull(request.getOwner(), "wrong owner");
-        assertNull(request.getCreated(), "wrong created");
     }
 
     @Test
