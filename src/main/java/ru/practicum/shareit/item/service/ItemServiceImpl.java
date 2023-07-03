@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
@@ -101,36 +102,35 @@ public class ItemServiceImpl implements ItemService {
                     LocalDateTime.now(), Status.REJECTED)
                 .ifPresent(booking -> itemDto.setNextBooking(BookingMapper.toBookingInfoDto(booking)));
         }
-        itemDto.setComments(commentRepository.findAllByItemId(item.getId()).orElse(List.of())
-            .stream()
-            .map(CommentMapper::toCommentDto)
-            .collect(toList()));
+        itemDto.setComments(
+            commentRepository.findAllByItemId(item.getId()).orElse(List.of()).stream().map(CommentMapper::toCommentDto)
+                .collect(toList()));
 
 
         return itemDto;
     }
 
     @Override
-    public List<ItemDto> getItemsById(long ownerId) {
+    public List<ItemDto> getItemsById(long ownerId, int from, int size) {
+        if (size <= 0) {
+            throw new IllegalArgumentException("wrong size ");
+        }
+        int pageCount = (from + size - 1) / size;
 
-        List<Item> items = itemRepository.findByOwnerIdOrderByIdAsc(ownerId);
+        List<Item> items = itemRepository.findByOwnerIdOrderByIdAsc(ownerId, PageRequest.of(pageCount, size)).stream()
+            .collect(toList());
 
         Map<Item, List<Comment>> comments =
-            commentRepository.findByItemInOrderByCreatedDesc(items, Sort.by(Sort.Direction.DESC, "created"))
-                .stream()
+            commentRepository.findByItemInOrderByCreatedDesc(items, Sort.by(Sort.Direction.DESC, "created")).stream()
                 .collect(Collectors.groupingBy(Comment::getItem, Collectors.toList()));
 
         Map<Item, List<Booking>> nextBookings =
             bookingRepository.findApprovedNextForItems(items, Sort.by(Sort.Direction.DESC, "start"),
-                    LocalDateTime.now())
-                .stream()
-                .collect(Collectors.groupingBy(Booking::getItem, Collectors.toList()));
+                LocalDateTime.now()).stream().collect(Collectors.groupingBy(Booking::getItem, Collectors.toList()));
 
         Map<Item, List<Booking>> lastBookings =
             bookingRepository.findApprovedLastForItems(items, Sort.by(Sort.Direction.DESC, "start"),
-                    LocalDateTime.now())
-                .stream()
-                .collect(Collectors.groupingBy(Booking::getItem, Collectors.toList()));
+                LocalDateTime.now()).stream().collect(Collectors.groupingBy(Booking::getItem, Collectors.toList()));
 
 
         List<ItemDto> itemsDto = new ArrayList<>();
@@ -150,9 +150,8 @@ public class ItemServiceImpl implements ItemService {
 
             List<Comment> itemComments = comments.get(item);
             if (itemComments != null && !itemComments.isEmpty()) {
-                List<CommentDto> commentDto = itemComments.stream()
-                    .map(CommentMapper::toCommentDto)
-                    .collect(Collectors.toList());
+                List<CommentDto> commentDto =
+                    itemComments.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
                 itemDto.setComments(commentDto);
             }
 
@@ -163,9 +162,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItems(String searchText) {
-        return
-            ItemMapper.toItemDtoList(itemRepository.search(searchText));
+    public List<ItemDto> searchItems(String searchText, int from, int size) {
+        if (size <= 0) {
+            throw new IllegalArgumentException("wrong size ");
+        }
+        int pageCount = (from + size - 1) / size;
+
+        return ItemMapper.toItemDtoList(itemRepository.search(searchText, PageRequest.of(pageCount, size)).stream()
+            .collect(toList()));
     }
 
     @Override

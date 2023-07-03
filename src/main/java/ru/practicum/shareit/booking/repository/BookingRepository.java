@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,16 +16,16 @@ import java.util.Set;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    List<Booking> findAllByBookerIdOrderByStartDesc(Long bookerId);
+    Page<Booking> findAllByBookerIdOrderByStartDesc(Long bookerId, Pageable pageable);
 
-    List<Booking> findByBookerIdAndStatusIsOrderByStartDesc(long userId, Status waiting);
+    Page<Booking> findByBookerIdAndStatusIsOrderByStartDesc(long userId, Status waiting, Pageable pageable);
 
-    List<Booking> findByBookerIdAndEndBeforeOrderByStartDesc(long userId, LocalDateTime now);
+    Page<Booking> findByBookerIdAndEndBeforeOrderByStartDesc(long userId, LocalDateTime now, Pageable pageable);
 
-    List<Booking> findByBookerIdAndStatusInOrderByStartDesc(long userId, Set<Status> futureStatuses);
+    Page<Booking> findByBookerIdAndStatusInOrderByStartDesc(long userId, Set<Status> futureStatuses, Pageable pageable);
 
-    List<Booking> findByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(long userId, LocalDateTime now,
-                                                                          LocalDateTime now1);
+    Page<Booking> findByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(long userId, LocalDateTime now,
+                                                                          LocalDateTime now1, Pageable pageable);
 
     Optional<Booking> findFirst1ByItemIdAndStartBeforeOrderByStartDesc(Long itemId, LocalDateTime time);
 
@@ -33,35 +35,35 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Optional<List<Booking>> findByItemIdAndBookerIdAndEndBeforeAndStatusNotLike(Long itemId, Long bookerId,
                                                                                 LocalDateTime time, Status status);
 
-    List<Booking> findByItem_OwnerIdOrderByStartDesc(long ownerId);
+    Page<Booking> findByItem_OwnerIdOrderByStartDesc(long ownerId, Pageable pageable);
 
     @Query("select b from Booking b " +
         "left join Item i on i.id = b.item " +
         "left join User u on i.owner = u.id " +
         "where u.id = ?1 and b.status in (?2) " +
         "order by b.start desc")
-    List<Booking> findByOwnerIdAndStatusIn(long ownerId, Set<Status> waiting);
+    Page<Booking> findByOwnerIdAndStatusIn(long ownerId, Set<Status> waiting, Pageable pageable);
 
     @Query("select b from Booking b " +
         "left join Item i on i.id = b.item " +
         "left join User u on i.owner = u.id " +
         "where u.id = ?1 and b.status = ?2 " +
         "order by b.start desc")
-    List<Booking> findByOwnerIdAndStatus(long ownerId, Status rejected);
+    Page<Booking> findByOwnerIdAndStatus(long ownerId, Status rejected, Pageable pageable);
 
     @Query("select b from Booking b " +
         "left join Item i on i.id = b.item " +
         "left join User u on i.owner = u.id " +
         "where u.id = ?1 and b.start < ?2 and b.end > ?2 " +
         "order by b.start desc")
-    List<Booking> findByOwnerIdCurrent(long ownerId, LocalDateTime now);
+    Page<Booking> findByOwnerIdCurrent(long ownerId, LocalDateTime now, Pageable pageable);
 
     @Query("select b from Booking b " +
         "left join Item i on i.id = b.item " +
         "left join User u on i.owner = u.id " +
         "where u.id = ?1 and b.end < ?2 " +
         "order by b.start desc")
-    List<Booking> findByOwnerIdPast(long ownerId, LocalDateTime now);
+    Page<Booking> findByOwnerIdPast(long ownerId, LocalDateTime now, Pageable pageable);
 
     @Query("SELECT b FROM Booking b " +
         "JOIN FETCH b.item " +
@@ -79,6 +81,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         "ORDER BY b.start DESC, b.id DESC")
     List<Booking> findApprovedLastForItems(List<Item> items, Sort sort, LocalDateTime now);
 
+    @Query("select b from Booking b " +
+        "left join Item i on i.id = b.item " +
+        "left join User u on i.owner = u.id " +
+        "where u.id = ?1 ")
+    Page<Booking> findByOwnerId(Long ownerId, Pageable pageable);
 }
 
 

@@ -59,8 +59,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (userRepository.findById(userId).isEmpty()){
             throw new DataNotFoundException("User not found");
         }
-        int page = (from + size - 1) / size;
-        Page<ItemRequest> requests = requestRepository.findByOwnerId(userId, PageRequest.of(page, size, Sort.by("created")));
+        if (size <= 0) {
+            throw new IllegalArgumentException("wrong size ");
+        }
+        int pageCount = (from + size - 1) / size;
+        Page<ItemRequest> requests = requestRepository.findByOwnerId(userId, PageRequest.of(pageCount, size, Sort.by("created")));
         return getItemsByRequests(requests);
     }
 
@@ -69,8 +72,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (userRepository.findById(userId).isEmpty()){
             throw new DataNotFoundException("User not found");
         }
-        int page = (from + size - 1) / size;
-        Page<ItemRequest> requests = requestRepository.findByOwnerIdNot(userId, PageRequest.of(page, size, Sort.by("created").descending()));
+        int pageCount = (from + size - 1) / size;
+        Page<ItemRequest> requests = requestRepository.findByOwnerIdNot(userId, PageRequest.of(pageCount, size, Sort.by("created").descending()));
         return getItemsByRequests(requests);
     }
 
