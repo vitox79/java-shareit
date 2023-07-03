@@ -16,7 +16,6 @@ public class UserDto {
 
     @NotBlank(message = "Invalid name")
     String name;
-
     @NotBlank(message = "Empty email")
     @Email(message = "Email should be valid")
     String email;

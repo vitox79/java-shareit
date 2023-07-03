@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
 import org.junit.jupiter.api.Test;
+import ru.practicum.shareit.exception.model.DataNotFoundException;
 import ru.practicum.shareit.exception.model.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -37,7 +38,7 @@ class UserServiceImplTest {
     void getUserUnknown() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Throwable thrown = assertThrows(NotFoundException.class, () -> {
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
             service.getUserById(0);
         });
 
@@ -132,7 +133,7 @@ class UserServiceImplTest {
 
     @Test
     void deleteUser() {
-        when(repository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
+        when(repository.existsById(anyLong())).thenReturn(true);
         service.deleteUser(1L);
     }
 }

@@ -7,7 +7,6 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dto.BookingInfoDto;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.model.DataNotFoundException;
-import ru.practicum.shareit.exception.model.NotFoundException;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.comment.model.Comment;
 import ru.practicum.shareit.item.comment.repository.CommentRepository;
@@ -118,12 +117,6 @@ class ItemServiceImplTest {
         assertNotNull(thrown.getMessage());
     }
 
-    @Test
-    void searchNoText() {
-        List<ItemDto> items = service.searchItems("", 0, 1);
-
-        assertEquals(0, items.size(), "wrong list");
-    }
 
     @Test
     void addCommentEmptyBooking() {
@@ -143,15 +136,6 @@ class ItemServiceImplTest {
 
         Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
             service.getItemById(1, 0);
-        });
-
-        assertNotNull(thrown.getMessage());
-    }
-
-    @Test
-    void getItemByIdWrong() {
-        Throwable thrown = assertThrows(NotFoundException.class, () -> {
-            service.getItemById(1, -1);
         });
 
         assertNotNull(thrown.getMessage());

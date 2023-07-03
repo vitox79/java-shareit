@@ -59,7 +59,7 @@ class BookingRepositoryTest {
 
         assertNotNull(bookings, "Null");
         assertEquals(1, bookings.size(), "Wrong size 1");
-        assertEquals(booking, bookings.get(0), "Wrong in 0");
+        assertEquals(booking1, bookings.get(0), "Wrong in 0");
     }
 
     @Test

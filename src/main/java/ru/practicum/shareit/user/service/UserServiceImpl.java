@@ -3,10 +3,12 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.model.DataNotFoundException;
+import ru.practicum.shareit.exception.model.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.RepositoryUser;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +23,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(long userId) {
-        return repository.findById(userId).orElse(null);
+        if (userId < 0) {
+             throw new NotFoundException("User Id must be positive.");
+        }
+        Optional<User> optional = repository.findById(userId);
+
+        return optional.orElseThrow(() -> new DataNotFoundException(String.format("User id %d doesn't exist", userId)));
     }
 
     @Override

@@ -35,14 +35,15 @@ class UserControllerTest {
     private UserDto userDto;
 
     @BeforeEach
-    void setUp() {
-        userDto = UserDto.builder().id(1L).name("name").email("user@mail.ru").build();
+    void init() {
+        userDto = UserDto.builder().id(1L).name("name").email("mail@mail.ru").build();
     }
 
     @Test
-    void createNewUser() throws Exception {
+    void createUser() throws Exception {
+        User user = UserMapper.toUser(userDto);
         when(service.createUser(any()))
-                .thenReturn(UserMapper.toUser(userDto));
+                .thenReturn(user);
 
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(userDto))
@@ -50,9 +51,9 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(userDto.getName())))
-                .andExpect(jsonPath("$.email", is(userDto.getEmail())));
+                .andExpect(jsonPath("$.id", is(user.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(user.getName())))
+                .andExpect(jsonPath("$.email", is(user.getEmail())));
     }
 
     @Test
@@ -71,10 +72,11 @@ class UserControllerTest {
 
     @Test
     void updateUser() throws Exception {
-        userDto.setName("Nike");
-
+        userDto.setName("Viktor");
+        User user = UserMapper.toUser(userDto);
+        user.setId(1L);
         when(service.updateUser(anyLong(), any()))
-                .thenReturn(UserMapper.toUser(userDto));
+                .thenReturn(user);
 
         mvc.perform(patch("/users/1")
                         .content(mapper.writeValueAsString(userDto))
@@ -83,14 +85,16 @@ class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is("Nike")))
+                .andExpect(jsonPath("$.name", is("Viktor")))
                 .andExpect(jsonPath("$.email", is(userDto.getEmail())));
     }
 
     @Test
     void getUser() throws Exception {
+        User user = UserMapper.toUser(userDto);
+        user.setId(1L);
         when(service.getUserById(anyLong()))
-                .thenReturn(UserMapper.toUser(userDto));
+                .thenReturn(user);
 
         mvc.perform(get("/users/1"))
                 .andExpect(status().isOk())
@@ -101,8 +105,12 @@ class UserControllerTest {
 
     @Test
     void getUsers() throws Exception {
-        UserDto userDto1 = UserDto.builder().id(2L).name("Nike").email("suv@name").build();
-        when(service.getAllUsers()).thenReturn(Arrays.asList(UserMapper.toUser(userDto),UserMapper.toUser(userDto1)));
+        UserDto userDto1 = UserDto.builder().id(2L).name("Boss").email("vvv@mail.ru").build();
+        User user = UserMapper.toUser(userDto);
+        user.setId(1L);
+        User user2 = UserMapper.toUser(userDto1);
+        user2.setId(2L);
+        when(service.getAllUsers()).thenReturn(Arrays.asList(user,user2));
         mvc.perform(
                         get("/users"))
                 .andExpect(status().isOk())

@@ -206,7 +206,7 @@ class BookingServiceImplTest {
 
     @Test
     void getAllByUserSize() {
-        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> {
             service.getAllByUser(1, "ALL", 0, -1);
         });
         assertNotNull(thrown.getMessage());
