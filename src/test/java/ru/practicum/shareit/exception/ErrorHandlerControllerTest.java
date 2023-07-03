@@ -11,10 +11,6 @@ import ru.practicum.shareit.exception.model.UnknownArgumentException;
 import ru.practicum.shareit.user.UserController;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
-import java.util.Set;
-
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
