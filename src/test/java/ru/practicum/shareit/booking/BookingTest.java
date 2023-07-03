@@ -1,9 +1,9 @@
 package ru.practicum.shareit.booking;
 
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.booking.Booking;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BookingTest {
     Booking booking = Booking.builder().id(1L).build();

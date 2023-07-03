@@ -12,7 +12,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.RepositoryUser;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -47,14 +46,15 @@ class BookingRepositoryTest {
     @Test
     void findByOwnerIdAndStatusIn() {
         Booking booking = Booking.builder().status(Status.WAITING).item(item)
-                .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
+            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
         Booking booking1 = Booking.builder().status(Status.REJECTED).item(item)
-                .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
+            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
 
         booking = repository.save(booking);
         repository.save(booking1);
 
-        List<Booking> bookings = repository.findByOwnerIdAndStatusIn(user.getId(), Set.of(Status.REJECTED, Status.CANCELED),
+        List<Booking> bookings =
+            repository.findByOwnerIdAndStatusIn(user.getId(), Set.of(Status.REJECTED, Status.CANCELED),
                 PageRequest.of(0, 2)).stream().collect(toList());
 
         assertNotNull(bookings, "Null");
@@ -65,15 +65,15 @@ class BookingRepositoryTest {
     @Test
     void findByOwnerIdAndStatus() {
         Booking booking = Booking.builder().status(Status.WAITING).item(item)
-                .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
+            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
         Booking booking1 = Booking.builder().status(Status.REJECTED).item(item)
-                .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
+            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
 
         repository.save(booking);
         booking1 = repository.save(booking1);
 
         List<Booking> bookings = repository.findByOwnerIdAndStatus(user.getId(), Status.REJECTED,
-                PageRequest.of(0, 2)).stream().collect(toList());
+            PageRequest.of(0, 2)).stream().collect(toList());
 
         assertNotNull(bookings, "Null data");
         assertEquals(1, bookings.size(), "Wrong size list");
@@ -83,15 +83,15 @@ class BookingRepositoryTest {
     @Test
     void findByOwnerId() {
         Booking booking = Booking.builder().status(Status.WAITING).item(item)
-                .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
+            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
         Booking booking1 = Booking.builder().status(Status.REJECTED).item(item)
-                .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
+            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
 
         booking = repository.save(booking);
         booking1 = repository.save(booking1);
 
         List<Booking> bookings = repository.findByOwnerId(user.getId(), PageRequest.of(0, 2))
-                .stream().collect(toList());
+            .stream().collect(toList());
 
         assertNotNull(bookings, "Null data");
         assertEquals(2, bookings.size(), "Wrong list size");
@@ -102,15 +102,15 @@ class BookingRepositoryTest {
     @Test
     void findByOwnerIdCurrent() {
         Booking booking = Booking.builder().status(Status.WAITING).item(item)
-                .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
+            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
         Booking booking1 = Booking.builder().status(Status.REJECTED).item(item)
-                .end(LocalDateTime.now().plusDays(1)).start(LocalDateTime.now().minusDays(1)).build();
+            .end(LocalDateTime.now().plusDays(1)).start(LocalDateTime.now().minusDays(1)).build();
 
         repository.save(booking);
         booking1 = repository.save(booking1);
 
         List<Booking> bookings = repository.findByOwnerIdCurrent(user.getId(), LocalDateTime.now(),
-                PageRequest.of(0, 2)).stream().collect(toList());
+            PageRequest.of(0, 2)).stream().collect(toList());
 
         assertNotNull(bookings, "Null data");
         assertEquals(1, bookings.size(), "Wrong size");
@@ -120,15 +120,15 @@ class BookingRepositoryTest {
     @Test
     void findByOwnerIdPast() {
         Booking booking = Booking.builder().status(Status.WAITING).item(item)
-                .end(LocalDateTime.now().plusHours(1)).start(LocalDateTime.now()).build();
+            .end(LocalDateTime.now().plusHours(1)).start(LocalDateTime.now()).build();
         Booking booking1 = Booking.builder().status(Status.REJECTED).item(item)
-                .end(LocalDateTime.now().minusHours(1)).start(LocalDateTime.now()).build();
+            .end(LocalDateTime.now().minusHours(1)).start(LocalDateTime.now()).build();
 
         repository.save(booking);
         booking1 = repository.save(booking1);
 
         List<Booking> bookings = repository.findByOwnerIdPast(user.getId(), LocalDateTime.now(),
-                PageRequest.of(0, 2)).stream().collect(toList());
+            PageRequest.of(0, 2)).stream().collect(toList());
 
         assertNotNull(bookings, "Null data");
         assertEquals(1, bookings.size(), "Wrong size");

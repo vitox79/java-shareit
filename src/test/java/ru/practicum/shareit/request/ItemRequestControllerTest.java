@@ -39,147 +39,147 @@ class ItemRequestControllerTest {
     @BeforeEach
     void init() {
         requestDto = ItemRequestDto.builder()
-                .id(1L)
-                .description("some")
-                .items(new ArrayList<>())
-                .build();
+            .id(1L)
+            .description("some")
+            .items(new ArrayList<>())
+            .build();
     }
 
     @Test
     void createNewRequest() throws Exception {
         when(service.add(anyLong(), any()))
-                .thenReturn(requestDto);
+            .thenReturn(requestDto);
 
         mvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", 1)
-                        .content(mapper.registerModule(new JavaTimeModule())
-                                .writeValueAsString(requestDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(requestDto.getId()), Long.class))
-                .andExpect(jsonPath("$.description", is(requestDto.getDescription())));
+                .header("X-Sharer-User-Id", 1)
+                .content(mapper.registerModule(new JavaTimeModule())
+                    .writeValueAsString(requestDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(requestDto.getId()), Long.class))
+            .andExpect(jsonPath("$.description", is(requestDto.getDescription())));
     }
 
     @Test
     void getRequest() throws Exception {
         when(service.getById(anyLong(), anyLong()))
-                .thenReturn(requestDto);
+            .thenReturn(requestDto);
 
         mvc.perform(get("/requests/1")
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(requestDto.getId()), Long.class))
-                .andExpect(jsonPath("$.description", is(requestDto.getDescription())));
+                .header("X-Sharer-User-Id", 1)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(requestDto.getId()), Long.class))
+            .andExpect(jsonPath("$.description", is(requestDto.getDescription())));
     }
 
     @Test
     void getRequestsByUserId() throws Exception {
         when(service.getAllByUser(anyLong(), anyInt(), anyInt()))
-                .thenReturn(List.of(requestDto));
+            .thenReturn(List.of(requestDto));
 
         mvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(List.of(requestDto))));
+                .header("X-Sharer-User-Id", 1)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json(mapper.writeValueAsString(List.of(requestDto))));
     }
 
     @Test
     void getAllRequests() throws Exception {
         when(service.getAll(anyLong(), anyInt(), anyInt()))
-                .thenReturn(List.of());
+            .thenReturn(List.of());
 
         mvc.perform(get("/requests/all?from=0&size=5")
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(List.of())));
+                .header("X-Sharer-User-Id", 1)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json(mapper.writeValueAsString(List.of())));
     }
 
     @Test
     void getAllRequestsWithSizeZero() throws Exception {
         when(service.getAll(anyLong(), anyInt(), anyInt()))
-                .thenReturn(List.of());
+            .thenReturn(List.of());
 
         mvc.perform(get("/requests/all?from=0&size=0")
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .header("X-Sharer-User-Id", 1)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
     void getAllRequestsWithWrongSize() throws Exception {
         when(service.getAll(anyLong(), anyInt(), anyInt()))
-                .thenReturn(List.of());
+            .thenReturn(List.of());
 
         mvc.perform(get("/requests/all?from=0&size=-1")
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .header("X-Sharer-User-Id", 1)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
     void getAllRequestsWithWrongFrom() throws Exception {
         when(service.getAll(anyLong(), anyInt(), anyInt()))
-                .thenReturn(List.of());
+            .thenReturn(List.of());
 
         mvc.perform(get("/requests/all?from=-2&size=2")
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .header("X-Sharer-User-Id", 1)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
     void getRequestsByUserIdWithSizeZero() throws Exception {
         when(service.getAllByUser(anyLong(), anyInt(), anyInt()))
-                .thenReturn(List.of(requestDto));
+            .thenReturn(List.of(requestDto));
 
         mvc.perform(get("/requests?from=0&size=0")
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .header("X-Sharer-User-Id", 1)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
     void getRequestsByUserIdWithWrongSize() throws Exception {
         when(service.getAllByUser(anyLong(), anyInt(), anyInt()))
-                .thenReturn(List.of(requestDto));
+            .thenReturn(List.of(requestDto));
 
         mvc.perform(get("/requests?from=1&size=-2")
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .header("X-Sharer-User-Id", 1)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
     void getRequestsByUserIdWithWrongFrom() throws Exception {
         when(service.getAllByUser(anyLong(), anyInt(), anyInt()))
-                .thenReturn(List.of(requestDto));
+            .thenReturn(List.of(requestDto));
 
         mvc.perform(get("/requests?from=-2&size=2")
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .header("X-Sharer-User-Id", 1)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
     }
 }

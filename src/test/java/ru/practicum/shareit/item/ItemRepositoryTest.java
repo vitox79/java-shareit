@@ -22,11 +22,11 @@ class ItemRepositoryTest {
         Item item = Item.builder().id(7L).name("item").description("that").available(true).build();
         Item item2 = Item.builder().id(1L).name("item1").description("what").available(true).build();
 
-        Item item1 = repository.save(item);
+        repository.save(item);
         repository.save(item2);
 
         List<Item> items = repository.search("what", PageRequest.of(0, 3))
-                .stream().collect(Collectors.toList());
+            .stream().collect(Collectors.toList());
 
         assertEquals(1, items.size(), "Wrong  search");
         assertEquals(item2.getId(), items.get(0).getId(), "Wrong item ");

@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BookingDtoTest {
     private final BookingDto bookingDto = BookingDto.builder()
-            .end(LocalDateTime.now())
-            .start(LocalDateTime.now())
-            .build();
+        .end(LocalDateTime.now())
+        .start(LocalDateTime.now())
+        .build();
     private static final Validator validator;
 
     static {

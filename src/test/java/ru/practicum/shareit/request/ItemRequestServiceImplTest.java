@@ -7,7 +7,6 @@ import ru.practicum.shareit.exception.model.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
@@ -32,7 +31,7 @@ class ItemRequestServiceImplTest {
     private final ItemRepository itemRepository = mock(ItemRepository.class);
 
     private final ItemRequestService service =
-            new ItemRequestServiceImpl(userRepository, itemRequestRepository, itemRepository);
+        new ItemRequestServiceImpl(userRepository, itemRequestRepository, itemRepository);
 
     @Test
     void getAllByUserFromNegative() {
@@ -111,10 +110,10 @@ class ItemRequestServiceImplTest {
     @Test
     void replyGetRequest() {
         ItemRequest itemRequest = ItemRequest.builder()
-                .description("desc")
-                .id(1L)
-                .created(LocalDateTime.now())
-                .build();
+            .description("desc")
+            .id(1L)
+            .created(LocalDateTime.now())
+            .build();
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.of(itemRequest));
 
         ItemRequest request = service.getById(1);
@@ -127,16 +126,16 @@ class ItemRequestServiceImplTest {
     @Test
     void getByIdWithItemsEmptyAndMapper() {
         when(userRepository.findById(anyLong()))
-                .thenReturn(Optional.of(User.builder().id(1L).email("user").name("name").build()));
+            .thenReturn(Optional.of(User.builder().id(1L).email("user").name("name").build()));
         ItemRequest request = ItemRequest.builder()
-                .id(1L)
-                .created(LocalDateTime.now())
-                .description("d")
-                .build();
+            .id(1L)
+            .created(LocalDateTime.now())
+            .description("d")
+            .build();
         when(itemRequestRepository.findById(anyLong()))
-                .thenReturn(Optional.of(request));
+            .thenReturn(Optional.of(request));
         when(itemRepository.findByRequestInOrderByIdAsc(any()))
-                .thenReturn(List.of());
+            .thenReturn(List.of());
 
         ItemRequestDto requestDto = service.getById(1, 1);
 
@@ -151,14 +150,14 @@ class ItemRequestServiceImplTest {
         when(userRepository.findById(anyLong()))
             .thenReturn(Optional.of(User.builder().id(1L).email("user").name("name").build()));
         ItemRequest request = ItemRequest.builder()
-                .id(1L)
-                .created(LocalDateTime.now())
-                .description("desc")
-                .build();
+            .id(1L)
+            .created(LocalDateTime.now())
+            .description("desc")
+            .build();
         when(itemRequestRepository.findById(anyLong()))
-                .thenReturn(Optional.of(request));
+            .thenReturn(Optional.of(request));
         when(itemRepository.findByRequestInOrderByIdAsc(any()))
-                .thenReturn(List.of(Item.builder().id(1L).build()));
+            .thenReturn(List.of(Item.builder().id(1L).build()));
 
         ItemRequestDto requestDto = service.getById(1, 1);
 
@@ -173,7 +172,7 @@ class ItemRequestServiceImplTest {
         when(userRepository.findById(anyLong()))
             .thenReturn(Optional.of(User.builder().id(1L).email("user").name("name").build()));
         when(itemRequestRepository.findByOwnerIdNot(anyLong(), any()))
-                .thenReturn(Page.empty());
+            .thenReturn(Page.empty());
 
         List<ItemRequestDto> requests = service.getAll(1, 0, 1);
 
@@ -186,7 +185,7 @@ class ItemRequestServiceImplTest {
         when(userRepository.findById(anyLong()))
             .thenReturn(Optional.of(User.builder().id(1L).email("user").name("name").build()));
         when(itemRequestRepository.findByOwnerId(anyLong(), any()))
-                .thenReturn(Page.empty());
+            .thenReturn(Page.empty());
 
         List<ItemRequestDto> requests = service.getAllByUser(1, 0, 1);
 
@@ -198,12 +197,12 @@ class ItemRequestServiceImplTest {
     void getAllByUser() {
         LocalDateTime time = LocalDateTime.now();
         ItemRequestDto requestDto = ItemRequestDto.builder().id(1L).description("d")
-                .created(time).items(List.of()).build();
+            .created(time).items(List.of()).build();
         when(userRepository.findById(anyLong()))
             .thenReturn(Optional.of(User.builder().id(1L).email("user").name("name").build()));
         when(itemRequestRepository.findByOwnerId(anyLong(), any()))
-                .thenReturn(new PageImpl<>(List.of(ItemRequest.builder().id(1L).description("d")
-                        .created(time).build())));
+            .thenReturn(new PageImpl<>(List.of(ItemRequest.builder().id(1L).description("d")
+                .created(time).build())));
         when(itemRepository.findByRequestInOrderByIdAsc(any())).thenReturn(List.of());
 
         List<ItemRequestDto> requests = service.getAllByUser(1, 0, 1);

@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ItemRequestDtoTest {
     private final ItemRequestDto requestDto = ItemRequestDto.builder()
-            .id(1L)
-            .description("some")
-            .created(LocalDateTime.now())
-            .build();
+        .id(1L)
+        .description("some")
+        .created(LocalDateTime.now())
+        .build();
 
     private static final Validator validator;
 

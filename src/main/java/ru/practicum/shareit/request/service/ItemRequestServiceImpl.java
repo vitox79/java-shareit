@@ -43,7 +43,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto getById(long userId, long requestId) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new DataNotFoundException("User not found");
         }
         ItemRequestDto requestDto = ItemRequestMapper.toItemRequestDto(getById(requestId));
@@ -56,24 +56,26 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> getAllByUser(long userId, int from, int size) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new DataNotFoundException("User not found");
         }
         if (size <= 0) {
             throw new IllegalArgumentException("wrong size ");
         }
         int pageCount = (from + size - 1) / size;
-        Page<ItemRequest> requests = requestRepository.findByOwnerId(userId, PageRequest.of(pageCount, size, Sort.by("created")));
+        Page<ItemRequest> requests =
+            requestRepository.findByOwnerId(userId, PageRequest.of(pageCount, size, Sort.by("created")));
         return getItemsByRequests(requests);
     }
 
     @Override
     public List<ItemRequestDto> getAll(long userId, int from, int size) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new DataNotFoundException("User not found");
         }
         int pageCount = (from + size - 1) / size;
-        Page<ItemRequest> requests = requestRepository.findByOwnerIdNot(userId, PageRequest.of(pageCount, size, Sort.by("created").descending()));
+        Page<ItemRequest> requests = requestRepository.findByOwnerIdNot(userId,
+            PageRequest.of(pageCount, size, Sort.by("created").descending()));
         return getItemsByRequests(requests);
     }
 
@@ -94,7 +96,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         Map<Long, List<ItemDto>> itemsMap = itemRepository.findByRequestInOrderByIdAsc(requests.toList())
             .stream()
             .filter(item -> item.getRequest() != null)
-            .collect(groupingBy(item -> item.getRequest().getId(), Collectors.mapping(ItemMapper::toInfoItemDto, Collectors.toList())));
+            .collect(groupingBy(item -> item.getRequest().getId(),
+                Collectors.mapping(ItemMapper::toInfoItemDto, Collectors.toList())));
 
         for (ItemRequestDto requestDto : requestsDto) {
             requestDto.setItems(itemsMap.getOrDefault(requestDto.getId(), List.of()));

@@ -21,9 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -357,13 +355,13 @@ class BookingServiceImplTest {
         assertEquals(booking.getEnd(), bookingDto.getEnd(), "wrong end");
         assertEquals(booking.getItem(), bookingDto.getItem(), "wrong item");
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
     void getByIdWhenBookerWithMapper() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         when(userRepository.findById(anyLong()))
             .thenReturn(Optional.of(User.builder().name("name").id(1L).email("email").build()));
         Booking booking = Booking.builder()
@@ -388,13 +386,13 @@ class BookingServiceImplTest {
         assertEquals(booking.getEnd(), bookingDto.getEnd(), "wrong end");
         assertEquals(booking.getItem(), bookingDto.getItem(), "wrong item");
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
     void updateWhenApprovedTrueWithMapper() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         Booking booking = Booking.builder()
             .status(Status.WAITING)
             .start(LocalDateTime.now().plusHours(1))
@@ -416,13 +414,13 @@ class BookingServiceImplTest {
         assertEquals(booking.getItem(), bookingDto.getItem(), "wrong item");
         assertEquals(Status.APPROVED, bookingDto.getStatus(), "wrong status");
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
     void updateWhenApprovedFalseWithMapper() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         Booking booking = Booking.builder()
             .status(Status.WAITING)
             .start(LocalDateTime.now().plusHours(1))
@@ -444,13 +442,13 @@ class BookingServiceImplTest {
         assertEquals(booking.getItem(), bookingDto.getItem(), "wrong item");
         assertEquals(Status.REJECTED, bookingDto.getStatus(), "wrong status");
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
     void getAllByOwnerStateAll() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
         when(repository.findByItem_OwnerIdOrderByStartDesc(anyLong(), any()))
             .thenReturn(Page.empty());
@@ -460,13 +458,13 @@ class BookingServiceImplTest {
         assertNotNull(bookingDtos, "null Dto");
         assertEquals(0, bookingDtos.size(), "wrong list");
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
     void getAllByOwnerStateFUTURE() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
         when(repository.findByOwnerIdAndStatusIn(anyLong(), any(), any()))
             .thenReturn(Page.empty());
@@ -476,13 +474,13 @@ class BookingServiceImplTest {
         assertNotNull(bookingDtos, "null Dto");
         assertEquals(0, bookingDtos.size(), "wrong list");
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
     void getAllByOwnerStateREJECTED() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
         when(repository.findByOwnerIdAndStatus(anyLong(), any(), any()))
             .thenReturn(Page.empty());
@@ -492,13 +490,13 @@ class BookingServiceImplTest {
         assertNotNull(bookingDtos, "null dto");
         assertEquals(0, bookingDtos.size(), "wrong list");
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
     void getAllByOwnerStateWAITING() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
         when(repository.findByOwnerIdAndStatus(anyLong(), any(), any()))
             .thenReturn(Page.empty());
@@ -508,13 +506,13 @@ class BookingServiceImplTest {
         assertNotNull(bookingDtos, "null dto");
         assertEquals(0, bookingDtos.size(), "wrong list");
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
     void getAllByOwnerStateCURRENT() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
         when(repository.findByOwnerIdCurrent(anyLong(), any(), any()))
             .thenReturn(Page.empty());
@@ -524,13 +522,13 @@ class BookingServiceImplTest {
         assertNotNull(bookingDtos, "null Dto");
         assertEquals(0, bookingDtos.size(), "wrong list");
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
     void getAllByUserStateAll() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
         when(repository.findAllByBookerIdOrderByStartDesc(anyLong(), any()))
             .thenReturn(Page.empty());
@@ -540,13 +538,13 @@ class BookingServiceImplTest {
         assertNotNull(bookingDtos, "null dto");
         assertEquals(0, bookingDtos.size(), "wrong list");
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
     void getAllByOwnerStatePAST() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
         when(repository.findByOwnerIdPast(anyLong(), any(), any()))
             .thenReturn(Page.empty());
@@ -557,13 +555,13 @@ class BookingServiceImplTest {
         assertEquals(0, bookingDtos.size(), "wrong list");
 
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
     void getAllByUserStateFUTURE() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
         when(repository.findByBookerIdAndStatusInOrderByStartDesc(anyLong(), any(), any()))
             .thenReturn(Page.empty());
@@ -574,12 +572,13 @@ class BookingServiceImplTest {
         assertEquals(0, bookingDtos.size(), "wrong list");
 
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
+
     @Test
     void getAllByUserStateWAITING() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
         when(repository.findByBookerIdAndStatusIsOrderByStartDesc(anyLong(), any(), any()))
             .thenReturn(Page.empty());
@@ -590,13 +589,13 @@ class BookingServiceImplTest {
         assertEquals(0, bookingDtos.size(), "wrong list");
 
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
     void getAllByUserStateREJECTED() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
         when(repository.findByBookerIdAndStatusIsOrderByStartDesc(anyLong(), any(), any()))
             .thenReturn(Page.empty());
@@ -607,13 +606,13 @@ class BookingServiceImplTest {
         assertEquals(0, bookingDtos.size(), "wrong list");
 
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
     void getAllByUserStatePAST() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
         when(repository.findByBookerIdAndEndBeforeOrderByStartDesc(anyLong(), any(), any()))
             .thenReturn(Page.empty());
@@ -623,14 +622,14 @@ class BookingServiceImplTest {
         assertNotNull(bookingDtos, "null list");
         assertEquals(0, bookingDtos.size(), "wrong list");
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
 
     @Test
     void getAllByUserStateCURRENT() {
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
         when(repository.findByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(anyLong(), any(), any(), any()))
             .thenReturn(Page.empty());
@@ -641,7 +640,7 @@ class BookingServiceImplTest {
         assertEquals(0, bookingDtos.size(), "wrong list");
 
 
-        service =  new BookingServiceImpl(repository, userRepository, itemRepository);
+        service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
 

@@ -10,7 +10,7 @@ import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BookingMapperTest {
 
@@ -35,16 +35,17 @@ class BookingMapperTest {
         assertEquals(bookingDto.getEnd(), booking.getEnd(), "end  in booking");
 
     }
+
     @Test
     void toBookingDto() {
         Booking booking = Booking.builder()
-                .id(1L)
-                .start(LocalDateTime.now())
-                .end(LocalDateTime.now())
-                .status(Status.WAITING)
-                .item(Item.builder().available(true).description("that").name("name").build())
-                .booker(User.builder().id(1L).name("name").email("mail").build())
-                .build();
+            .id(1L)
+            .start(LocalDateTime.now())
+            .end(LocalDateTime.now())
+            .status(Status.WAITING)
+            .item(Item.builder().available(true).description("that").name("name").build())
+            .booker(User.builder().id(1L).name("name").email("mail").build())
+            .build();
         BookingDto bookingDto = BookingMapper.toBookingDto(booking);
 
         assertEquals(booking.getEnd(), bookingDto.getEnd(), "end in dto");

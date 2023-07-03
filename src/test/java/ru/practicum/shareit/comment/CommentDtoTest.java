@@ -13,8 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CommentDtoTest {
     private final CommentDto commentDto = CommentDto.builder()
-            .text("text")
-            .build();
+        .text("text")
+        .build();
 
     private static final Validator validator;
 

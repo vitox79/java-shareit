@@ -47,10 +47,10 @@ class UserServiceImplTest {
     @Test
     void getUser() {
         User userRepository = User.builder()
-                .id(1L)
-                .name("name")
-                .email("mail")
-                .build();
+            .id(1L)
+            .name("name")
+            .email("mail")
+            .build();
         when(repository.findById(anyLong())).thenReturn(Optional.of(userRepository));
 
         User user = service.getUserById(1);
@@ -62,9 +62,9 @@ class UserServiceImplTest {
     @Test
     void getUserByIdWithMapper() {
         User user = User.builder()
-                .id(1L)
-                .email("mail")
-                .name("name").build();
+            .id(1L)
+            .email("mail")
+            .name("name").build();
         when(repository.findById(anyLong())).thenReturn(Optional.of(user));
 
         User userOut = service.getUserById(1);
@@ -76,21 +76,21 @@ class UserServiceImplTest {
     @Test
     void updateNameAndEmail() {
         User userRepository = User.builder()
-                .id(1L)
-                .name("name")
-                .email("email")
-                .build();
+            .id(1L)
+            .name("name")
+            .email("email")
+            .build();
         when(repository.findById(anyLong())).thenReturn(Optional.of(userRepository));
         User userUpdate = User.builder()
-                .id(1L)
-                .name("name2")
-                .email("mail")
-                .build();
+            .id(1L)
+            .name("name2")
+            .email("mail")
+            .build();
         when(repository.save(any())).thenReturn(userUpdate);
         User update = User.builder()
-                .name("name2")
-                .email("mail")
-                .build();
+            .name("name2")
+            .email("mail")
+            .build();
 
         User user = service.updateUser(1, update);
 
