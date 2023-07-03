@@ -390,7 +390,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void updateWhenApprovedTrueWithMapper() {
+    void updateWhenApprovedTrue() {
 
         service = new BookingServiceImpl(repository, userRepository, itemRepository);
         Booking booking = Booking.builder()
@@ -405,20 +405,20 @@ class BookingServiceImplTest {
                 .build())
             .build();
         when(repository.findById(anyLong())).thenReturn(Optional.of(booking));
-
+        when(repository.save(any())).thenReturn(booking);
         BookingDto bookingDto = service.update(1, 1, true);
 
         assertNotNull(bookingDto, "null Dto");
         assertEquals(booking.getStart(), bookingDto.getStart(), "wrong start start");
         assertEquals(booking.getEnd(), bookingDto.getEnd(), "wrong end");
         assertEquals(booking.getItem(), bookingDto.getItem(), "wrong item");
-        assertEquals(Status.APPROVED, bookingDto.getStatus(), "wrong status");
+        assertEquals(Status.APPROVED.toString(), bookingDto.getStatus(), "wrong status");
 
         service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
 
     @Test
-    void updateWhenApprovedFalseWithMapper() {
+    void updateWhenApprovedFalse() {
 
         service = new BookingServiceImpl(repository, userRepository, itemRepository);
         Booking booking = Booking.builder()
@@ -433,6 +433,7 @@ class BookingServiceImplTest {
                 .build())
             .build();
         when(repository.findById(anyLong())).thenReturn(Optional.of(booking));
+        when(repository.save(any())).thenReturn(booking);
 
         BookingDto bookingDto = service.update(1, 1, false);
 
@@ -440,7 +441,7 @@ class BookingServiceImplTest {
         assertEquals(booking.getStart(), bookingDto.getStart(), "wrong start start");
         assertEquals(booking.getEnd(), bookingDto.getEnd(), "wrong end");
         assertEquals(booking.getItem(), bookingDto.getItem(), "wrong item");
-        assertEquals(Status.REJECTED, bookingDto.getStatus(), "wrong status");
+        assertEquals(Status.REJECTED.toString(), bookingDto.getStatus(), "wrong status");
 
         service = new BookingServiceImpl(repository, userRepository, itemRepository);
     }
