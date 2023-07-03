@@ -28,6 +28,7 @@ public class Comment {
     @OneToOne
     User author;
     LocalDateTime created;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

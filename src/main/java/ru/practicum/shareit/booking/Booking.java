@@ -38,6 +38,7 @@ public class Booking {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
