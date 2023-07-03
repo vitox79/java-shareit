@@ -42,7 +42,7 @@ public class BookingController {
                                                 @PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                                 @Positive @RequestParam(defaultValue = "10") int size) {
         System.out.println(from);
-        return bookingService.getAllByUser(userId, state , from, size);
+        return bookingService.getAllByUser(userId, state, from, size);
 
     }
 

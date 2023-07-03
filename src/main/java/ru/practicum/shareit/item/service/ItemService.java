@@ -18,6 +18,7 @@ public interface ItemService {
     List<ItemDto> searchItems(String searchText, int from, int size);
 
     CommentDto addComment(long userId, long itemId, CommentDto commentDto);
+
      ItemRequest getRequestById(long requestId);
 
 }
