@@ -35,7 +35,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     void getAllByUserFromNegative() {
-        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
             service.getAllByUser(1, -1, 1);
         });
 
@@ -44,7 +44,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     void getAllByUserSizeNegative() {
-        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
             service.getAllByUser(1, 0, -1);
         });
 
@@ -53,7 +53,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     void getAllByUserSizeZero() {
-        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
             service.getAllByUser(1, 0, 0);
         });
 
@@ -61,7 +61,7 @@ class ItemRequestServiceImplTest {
     }
 
     @Test
-    void getAllFromNegative() {
+    void getAllWrongFrom() {
         Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
             service.getAll(1, -1, 1);
         });
@@ -124,7 +124,7 @@ class ItemRequestServiceImplTest {
     }
 
     @Test
-    void getByIdWithItemsEmptyAndMapper() {
+    void getByIdWithItemsEmpty() {
         when(userRepository.findById(anyLong()))
             .thenReturn(Optional.of(User.builder().id(1L).email("user").name("name").build()));
         ItemRequest request = ItemRequest.builder()
@@ -146,7 +146,7 @@ class ItemRequestServiceImplTest {
     }
 
     @Test
-    void getByIdWithItemsAndMapper() {
+    void getByIdWithItems() {
         when(userRepository.findById(anyLong()))
             .thenReturn(Optional.of(User.builder().id(1L).email("user").name("name").build()));
         ItemRequest request = ItemRequest.builder()
