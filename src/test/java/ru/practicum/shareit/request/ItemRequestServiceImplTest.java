@@ -3,7 +3,7 @@ package ru.practicum.shareit.request;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import ru.practicum.shareit.exception.model.NotFoundException;
+import ru.practicum.shareit.exception.model.DataNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -62,7 +62,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     void getAllFromNegative() {
-        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
             service.getAll(1, -1, 1);
         });
 
@@ -71,7 +71,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     void getAllSizeNegative() {
-        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
             service.getAll(1, 0, -1);
         });
 
@@ -80,7 +80,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     void getAllSizeZero() {
-        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
             service.getAll(1, 0, 0);
         });
 
@@ -91,7 +91,7 @@ class ItemRequestServiceImplTest {
     void replyNotFoundException() {
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Throwable thrown = assertThrows(NotFoundException.class, () -> {
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
             service.getById(0);
         });
 
@@ -100,7 +100,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     void replyIncorrectCountException() {
-        Throwable thrown = assertThrows(NotFoundException.class, () -> {
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
             service.getById(-1);
         });
 
