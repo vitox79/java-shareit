@@ -147,17 +147,19 @@ class ItemRequestServiceImplTest {
 
     @Test
     void getByIdWithItems() {
+        User user = User.builder().id(1L).email("user").name("name").build();
         when(userRepository.findById(anyLong()))
-            .thenReturn(Optional.of(User.builder().id(1L).email("user").name("name").build()));
+            .thenReturn(Optional.of(user));
         ItemRequest request = ItemRequest.builder()
             .id(1L)
             .created(LocalDateTime.now())
             .description("desc")
+            .owner(user)
             .build();
         when(itemRequestRepository.findById(anyLong()))
             .thenReturn(Optional.of(request));
         when(itemRepository.findByRequestInOrderByIdAsc(any()))
-            .thenReturn(List.of(Item.builder().id(1L).build()));
+            .thenReturn(List.of(Item.builder().id(1L).owner(user).build()));
 
         ItemRequestDto requestDto = service.getById(1, 1);
 
