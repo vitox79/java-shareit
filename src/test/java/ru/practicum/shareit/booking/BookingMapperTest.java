@@ -1,8 +1,10 @@
 package ru.practicum.shareit.booking;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingInfoDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.status.Status;
 import ru.practicum.shareit.item.model.Item;
@@ -10,51 +12,62 @@ import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-class BookingMapperTest {
-
+public class BookingMapperTest {
     @Test
-    void toInfoBookingDto() {
-        Booking booking = Booking.builder()
-            .id(1L)
-            .booker(User.builder().id(1L).name("name").email("mail").build())
+    public void testToBooking() {
+        BookingDto bookingDto = BookingDto.builder()
+            .start(LocalDateTime.of(2023, 7, 1, 10, 0))
+            .end(LocalDateTime.of(2023, 7, 1, 12, 0))
             .build();
-        BookingInfoDto itemsBookingDto = BookingMapper.toBookingInfoDto(booking);
 
-        assertEquals(booking.getId(), itemsBookingDto.getId(), "id in InfoDto");
-        assertEquals(booking.getBooker().getId(), itemsBookingDto.getBookerId(), "user in InfoDto");
-    }
-
-    @Test
-    void toBooking() {
-        BookingDto bookingDto = BookingDto.builder().start(LocalDateTime.now()).end(LocalDateTime.now()).build();
         Booking booking = BookingMapper.toBooking(bookingDto);
 
-        assertEquals(bookingDto.getStart(), booking.getStart(), "start in booking ");
-        assertEquals(bookingDto.getEnd(), booking.getEnd(), "end  in booking");
-
+        Assertions.assertEquals(bookingDto.getStart(), booking.getStart());
+        Assertions.assertEquals(bookingDto.getEnd(), booking.getEnd());
     }
 
     @Test
-    void toBookingDto() {
-        Booking booking = Booking.builder()
-            .id(1L)
-            .start(LocalDateTime.now())
-            .end(LocalDateTime.now())
-            .status(Status.WAITING)
-            .item(Item.builder().available(true).description("that").name("name").build())
-            .booker(User.builder().id(1L).name("name").email("mail").build())
-            .build();
+    public void testToBookingDto() {
+        User booker = new User();
+        Item item = new Item();
+        Booking booking = Booking.builder().booker(booker).status(Status.WAITING).item(item).build();
+
         BookingDto bookingDto = BookingMapper.toBookingDto(booking);
 
-        assertEquals(booking.getEnd(), bookingDto.getEnd(), "end in dto");
-        assertEquals(booking.getStart(), bookingDto.getStart(), "start in dto ");
-        assertEquals(booking.getId(), bookingDto.getId(), "id in dto");
-        assertEquals(booking.getStatus().toString(), bookingDto.getStatus(), "status in dto");
-        assertEquals(booking.getBooker(), bookingDto.getBooker(), "booker in dto");
-        assertEquals(booking.getItem(), bookingDto.getItem(), "item in dto");
+        Assertions.assertEquals(booking.getId(), bookingDto.getId());
+        Assertions.assertEquals(booking.getStart(), bookingDto.getStart());
+        Assertions.assertEquals(booking.getEnd(), bookingDto.getEnd());
+        Assertions.assertEquals(booking.getStatus().toString(), bookingDto.getStatus());
+        Assertions.assertEquals(booking.getBooker(), bookingDto.getBooker());
+        Assertions.assertEquals(booking.getItem(), bookingDto.getItem());
     }
 
+    @Test
+    public void testToBookingInfoDto() {
+        User booker = new User();
+        Booking booking = Booking.builder().booker(booker).build();
 
+        BookingInfoDto bookingInfoDto = BookingMapper.toBookingInfoDto(booking);
+
+        Assertions.assertEquals(booking.getId(), bookingInfoDto.getId());
+        Assertions.assertEquals(booking.getBooker().getId(), bookingInfoDto.getBookerId());
+    }
+
+    @Test
+    public void testToBookingWithRequestDto() {
+        User booker = new User();
+        Item item = new Item();
+        BookingRequestDto requestDto = BookingRequestDto.builder()
+            .start(LocalDateTime.of(2023, 7, 1, 10, 0))
+            .end(LocalDateTime.of(2023, 7, 1, 12, 0))
+            .build();
+
+        Booking booking = BookingMapper.toBooking(requestDto, item, booker);
+
+        Assertions.assertEquals(requestDto.getStart(), booking.getStart());
+        Assertions.assertEquals(requestDto.getEnd(), booking.getEnd());
+        Assertions.assertEquals(Status.WAITING, booking.getStatus());
+        Assertions.assertEquals(booker, booking.getBooker());
+        Assertions.assertEquals(item, booking.getItem());
+    }
 }
