@@ -136,4 +136,29 @@ class UserServiceImplTest {
         when(repository.existsById(anyLong())).thenReturn(true);
         service.deleteUser(1L);
     }
+
+    @Test
+    void updateUserNull() {
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
+            service.updateUser(0, User
+                .builder()
+                .id(1L)
+                .name("name")
+                .email("email")
+                .build());
+        });
+
+        assertNotNull(thrown.getMessage());
+    }
+
+    @Test
+    void deleteUserNull() {
+        when(repository.existsById(anyLong())).thenReturn(false);
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
+            service.deleteUser(0);
+        });
+
+        assertNotNull(thrown.getMessage());
+    }
 }

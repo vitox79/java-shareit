@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dto.BookingInfoDto;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.booking.status.Status;
 import ru.practicum.shareit.exception.model.DataNotFoundException;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.comment.model.Comment;
@@ -15,6 +16,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.RepositoryUser;
@@ -330,5 +332,95 @@ class ItemServiceImplTest {
         assertNull(itemDto.get(2).getNextBooking(), "should be null");
         assertNull(itemDto.get(2).getLastBooking(), "should be null");
     }
+
+    @Test
+    void getItemByIdInvalidId() {
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
+            service.getItemById(0, 1);
+        });
+
+        assertNotNull(thrown.getMessage());
+    }
+
+    @Test
+    void addCommentNoItem() {
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+        Throwable thrown = assertThrows(ValidationException.class, () -> {
+            service.addComment(1, 1, mock(CommentDto.class));
+        });
+
+        assertNotNull(thrown.getMessage());
+    }
+
+    @Test
+    void searchItemsInvalidPageSize() {
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> {
+            service.searchItems("text", 1, 0);
+        });
+
+        assertNotNull(thrown.getMessage());
+    }
+
+    @Test
+    void addItemNoUser() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
+            service.addItem(1L, ItemDto.builder().id(1L).build());
+        });
+    }
+
+    @Test
+    void editItemNull() {
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+        Throwable thrown = assertThrows(DataNotFoundException.class, () -> {
+            service.editItem(1L, ItemDto.builder().id(1L).build());
+        });
+    }
+
+    @Test
+    void getItemById() {
+        long userId = 1L;
+        long itemId = 1L;
+
+        when(repository.findById(itemId)).thenReturn(Optional.of(Item
+            .builder()
+            .id(1L)
+            .owner(User.builder().id(1L).build())
+            .name("item")
+            .description("d")
+            .available(true)
+            .request(null)
+            .build()));
+
+        when(commentRepository.findAllByItemId(itemId)).thenReturn(Optional.of(List.of()));
+        when(bookingRepository.findFirst1ByItemIdAndStartBeforeOrderByStartDesc(
+            itemId, LocalDateTime.now())).thenReturn(Optional.of(new Booking()));
+        when(bookingRepository.findFirst1ByItemIdAndStartAfterAndStatusNotLikeOrderByStartAsc(
+            itemId, LocalDateTime.now(), Status.REJECTED)).thenReturn(Optional.of(new Booking()));
+
+        ItemDto result = service.getItemById(userId, itemId);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("item", result.getName());
+    }
+
+    @Test
+    void getRequestById() {
+        long requestId = 1L;
+        ItemRequest itemRequest = new ItemRequest();
+        itemRequest.setId(requestId);
+
+        when(itemRequestRepository.findById(requestId)).thenReturn(Optional.of(itemRequest));
+
+        ItemRequest result = service.getRequestById(requestId);
+
+        assertNotNull(result);
+        assertEquals(requestId, result.getId());
+    }
+
 
 }

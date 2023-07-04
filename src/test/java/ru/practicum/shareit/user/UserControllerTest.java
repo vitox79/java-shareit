@@ -43,31 +43,31 @@ class UserControllerTest {
     void createUser() throws Exception {
         User user = UserMapper.toUser(userDto);
         when(service.createUser(any()))
-                .thenReturn(user);
+            .thenReturn(user);
 
         mvc.perform(post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(user.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(user.getName())))
-                .andExpect(jsonPath("$.email", is(user.getEmail())));
+                .content(mapper.writeValueAsString(userDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(user.getId()), Long.class))
+            .andExpect(jsonPath("$.name", is(user.getName())))
+            .andExpect(jsonPath("$.email", is(user.getEmail())));
     }
 
     @Test
     void createFailUser() throws Exception {
         userDto.setEmail(null);
         when(service.createUser(any()))
-                .thenReturn(UserMapper.toUser(userDto));
+            .thenReturn(UserMapper.toUser(userDto));
 
         mvc.perform(post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .content(mapper.writeValueAsString(userDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -76,17 +76,17 @@ class UserControllerTest {
         User user = UserMapper.toUser(userDto);
         user.setId(1L);
         when(service.updateUser(anyLong(), any()))
-                .thenReturn(user);
+            .thenReturn(user);
 
         mvc.perform(patch("/users/1")
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is("Viktor")))
-                .andExpect(jsonPath("$.email", is(userDto.getEmail())));
+                .content(mapper.writeValueAsString(userDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
+            .andExpect(jsonPath("$.name", is("Viktor")))
+            .andExpect(jsonPath("$.email", is(userDto.getEmail())));
     }
 
     @Test
@@ -94,13 +94,13 @@ class UserControllerTest {
         User user = UserMapper.toUser(userDto);
         user.setId(1L);
         when(service.getUserById(anyLong()))
-                .thenReturn(user);
+            .thenReturn(user);
 
         mvc.perform(get("/users/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(userDto.getName())))
-                .andExpect(jsonPath("$.email", is(userDto.getEmail())));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
+            .andExpect(jsonPath("$.name", is(userDto.getName())))
+            .andExpect(jsonPath("$.email", is(userDto.getEmail())));
     }
 
     @Test
@@ -110,16 +110,16 @@ class UserControllerTest {
         user.setId(1L);
         User user2 = UserMapper.toUser(userDto1);
         user2.setId(2L);
-        when(service.getAllUsers()).thenReturn(Arrays.asList(user,user2));
+        when(service.getAllUsers()).thenReturn(Arrays.asList(user, user2));
         mvc.perform(
-                        get("/users"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(Arrays.asList(userDto, userDto1))));
+                get("/users"))
+            .andExpect(status().isOk())
+            .andExpect(content().json(mapper.writeValueAsString(Arrays.asList(userDto, userDto1))));
     }
 
     @Test
     void deleteUser() throws Exception {
         mvc.perform(delete("/users/1"))
-                .andExpect(status().isOk());
+            .andExpect(status().isOk());
     }
 }

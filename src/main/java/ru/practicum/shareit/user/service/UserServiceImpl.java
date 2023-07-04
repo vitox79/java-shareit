@@ -27,7 +27,6 @@ public class UserServiceImpl implements UserService {
              throw new NotFoundException("User Id must be positive.");
         }
         Optional<User> optional = repository.findById(userId);
-
         return optional.orElseThrow(() -> new DataNotFoundException(String.format("User id %d doesn't exist", userId)));
     }
 
@@ -44,7 +43,6 @@ public class UserServiceImpl implements UserService {
         if (updatedUser.getEmail() != null) {
             user.setEmail(updatedUser.getEmail());
         }
-
         return repository.save(user);
     }
 
