@@ -32,6 +32,8 @@ class BookingRepositoryTest {
     private RepositoryUser userRepository;
     private User user;
     private Item item;
+    Booking booking;
+    Booking booking1;
 
     @BeforeEach
     void init() {
@@ -41,14 +43,16 @@ class BookingRepositoryTest {
 
         user = userRepository.save(User.builder().id(1L).name("user").email("name@mail.ru").build());
         item = itemRepository.save(Item.builder().id(1L).owner(user).name("user").description("what").build());
+        booking = Booking.builder().status(Status.WAITING).item(item)
+            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
+        booking1 = Booking.builder().status(Status.REJECTED).item(item)
+            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
+
+
     }
 
     @Test
     void findByOwnerIdAndStatusIn() {
-        Booking booking = Booking.builder().status(Status.WAITING).item(item)
-            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
-        Booking booking1 = Booking.builder().status(Status.REJECTED).item(item)
-            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
 
         booking = repository.save(booking);
         repository.save(booking1);
@@ -64,10 +68,6 @@ class BookingRepositoryTest {
 
     @Test
     void findByOwnerIdAndStatus() {
-        Booking booking = Booking.builder().status(Status.WAITING).item(item)
-            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
-        Booking booking1 = Booking.builder().status(Status.REJECTED).item(item)
-            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
 
         repository.save(booking);
         booking1 = repository.save(booking1);
@@ -82,10 +82,6 @@ class BookingRepositoryTest {
 
     @Test
     void findByOwnerId() {
-        Booking booking = Booking.builder().status(Status.WAITING).item(item)
-            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
-        Booking booking1 = Booking.builder().status(Status.REJECTED).item(item)
-            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
 
         booking = repository.save(booking);
         booking1 = repository.save(booking1);
@@ -101,10 +97,6 @@ class BookingRepositoryTest {
 
     @Test
     void findByOwnerIdCurrent() {
-        Booking booking = Booking.builder().status(Status.WAITING).item(item)
-            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
-        Booking booking1 = Booking.builder().status(Status.REJECTED).item(item)
-            .end(LocalDateTime.now().plusDays(1)).start(LocalDateTime.now().minusDays(1)).build();
 
         repository.save(booking);
         booking1 = repository.save(booking1);
@@ -119,10 +111,6 @@ class BookingRepositoryTest {
 
     @Test
     void findByOwnerIdPast() {
-        Booking booking = Booking.builder().status(Status.WAITING).item(item)
-            .end(LocalDateTime.now().plusHours(1)).start(LocalDateTime.now()).build();
-        Booking booking1 = Booking.builder().status(Status.REJECTED).item(item)
-            .end(LocalDateTime.now().minusHours(1)).start(LocalDateTime.now()).build();
 
         repository.save(booking);
         booking1 = repository.save(booking1);
