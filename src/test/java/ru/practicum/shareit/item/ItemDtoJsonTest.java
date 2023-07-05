@@ -23,7 +23,7 @@ public class ItemDtoJsonTest {
     private JacksonTester<ItemDto> json;
 
     @Test
-    void ItemDtoTest() throws Exception {
+    void itemDtoTest() throws Exception {
         LocalDateTime time = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         DateTimeFormatter dtf = DateTimeFormatter.BASIC_ISO_DATE;
         BookingInfoDto last = BookingInfoDto.builder()
