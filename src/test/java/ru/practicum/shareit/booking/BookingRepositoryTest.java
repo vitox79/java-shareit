@@ -32,8 +32,8 @@ class BookingRepositoryTest {
     private RepositoryUser userRepository;
     private User user;
     private Item item;
-    Booking booking;
-    Booking booking1;
+    private Booking booking;
+    private Booking booking1;
 
     @BeforeEach
     void init() {
@@ -97,6 +97,11 @@ class BookingRepositoryTest {
 
     @Test
     void findByOwnerIdCurrent() {
+        Booking booking = Booking.builder().status(Status.WAITING).item(item)
+            .end(LocalDateTime.now()).start(LocalDateTime.now()).build();
+        Booking booking1 = Booking.builder().status(Status.REJECTED).item(item)
+            .end(LocalDateTime.now().plusDays(1)).start(LocalDateTime.now().minusDays(1)).build();
+
 
         repository.save(booking);
         booking1 = repository.save(booking1);
