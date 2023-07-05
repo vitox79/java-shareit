@@ -116,6 +116,10 @@ class BookingRepositoryTest {
 
     @Test
     void findByOwnerIdPast() {
+        Booking booking = Booking.builder().status(Status.WAITING).item(item)
+            .end(LocalDateTime.now().plusHours(1)).start(LocalDateTime.now()).build();
+        Booking booking1 = Booking.builder().status(Status.REJECTED).item(item)
+            .end(LocalDateTime.now().minusHours(1)).start(LocalDateTime.now()).build();
 
         repository.save(booking);
         booking1 = repository.save(booking1);
@@ -128,3 +132,6 @@ class BookingRepositoryTest {
         assertEquals(booking1, bookings.get(0), "Wrong in 0");
     }
 }
+
+
+
