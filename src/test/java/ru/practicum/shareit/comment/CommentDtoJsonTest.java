@@ -20,7 +20,7 @@ public class CommentDtoJsonTest {
     private JacksonTester<CommentDto> json;
 
     @Test
-    void CommentDtoTest() throws IOException {
+    void commentDtoTest() throws IOException {
         LocalDateTime time = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         DateTimeFormatter dtf = DateTimeFormatter.BASIC_ISO_DATE;
 
