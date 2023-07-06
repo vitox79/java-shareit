@@ -1,22 +1,24 @@
-package ru.practicum.shareit.item.comment.dto;
+package ru.practicum.shareit.request.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CommentDto {
-    Long id;
+public class ItemRequestDto {
+    long id;
     @NotBlank
     @Size(max = 512)
-    String text;
-    String authorName;
+    String description;
     LocalDateTime created;
+    List<ItemDto> items;
 }
