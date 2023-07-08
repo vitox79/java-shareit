@@ -9,7 +9,6 @@ import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
