@@ -17,7 +17,7 @@ public class ErrorHandlerController {
     public Map<String, String> handleConstraintViolationException(final ConstraintViolationException e) {
         log.debug("400 Bad request {}", e.getMessage(), e);
         return Map.of(
-                "errorMessage", e.getMessage()
+            "errorMessage", e.getMessage()
         );
     }
 
@@ -26,7 +26,17 @@ public class ErrorHandlerController {
     public Map<String, String> handleIllegalArgumentException(final IllegalArgumentException e) {
         log.debug("400 Bad request", e.getMessage(), e);
         return Map.of(
-                "error", e.getMessage()
+            "error", e.getMessage()
         );
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handleInternalServerException(final Exception e) {
+        log.error("500 Internal Server Error", e);
+        return Map.of(
+            "error", e.getMessage()
+        );
+    }
+
 }
