@@ -25,15 +25,15 @@ public class ItemClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> createItem(long userId, ItemDto itemDto) {
+    public ResponseEntity<Object> addItem(long userId, ItemDto itemDto) {
         return post("", userId, itemDto);
     }
 
-    public ResponseEntity<Object> createComment(long itemId, long userId, CommentDto commentDto) {
+    public ResponseEntity<Object> addCommentToItem(long itemId, long userId, CommentDto commentDto) {
         return post("/" + itemId + "/comment", userId, commentDto);
     }
 
-    public ResponseEntity<Object> getItems(long userId, int from, int size) {
+    public ResponseEntity<Object> getAllItems(long userId, int from, int size) {
         Map<String, Object> parameters = Map.of(
                 "from", from,
                 "size", size

@@ -21,7 +21,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<Object> createUser(@Validated({Create.class}) @RequestBody UserDto userDto) {
         log.info("Creating user {}", userDto);
-        return userClient.createUser(userDto);
+        return userClient.addUser(userDto);
     }
 
     @PatchMapping("/{userId}")

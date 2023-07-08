@@ -16,16 +16,30 @@ public class RequestClient extends BaseClient {
     private static final String API_PREFIX = "/requests";
 
     @Autowired
-    public RequestClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public RequestClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder restTemplateBuilder) {
         super(
-                builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
-                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
-                        .build()
+            restTemplateBuilder
+                .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
+                .requestFactory(HttpComponentsClientHttpRequestFactory::new)
+                .build()
         );
     }
+    public ResponseEntity<Object> getRequestsByUser(long userId, Integer from, Integer size) {
+        Map<String, Object> parameters = Map.of(
+            "from", from,
+            "size", size
+        );
+        return get("?from={from}&size={size}", userId, parameters);
+    }
 
-    public ResponseEntity<Object> createRequest(long userId, RequestDto requestDto) {
+    public ResponseEntity<Object> getAllRequests(long userId, Integer from, Integer size) {
+        Map<String, Object> parameters = Map.of(
+            "from", from,
+            "size", size
+        );
+        return get("/all?from={from}&size={size}", userId, parameters);
+    }
+    public ResponseEntity<Object> createNewRequest(long userId, RequestDto requestDto) {
         return post("", userId, requestDto);
     }
 
@@ -33,20 +47,5 @@ public class RequestClient extends BaseClient {
         return get("/" + requestId, userId);
     }
 
-    public ResponseEntity<Object> getRequestsByUser(long userId, Integer from, Integer size) {
-        Map<String, Object> parameters = Map.of(
-                "from", from,
-                "size", size
-        );
-        return get("?from={from}&size={size}", userId, parameters);
-    }
-
-    public ResponseEntity<Object> getAllRequests(long userId, Integer from, Integer size) {
-        Map<String, Object> parameters = Map.of(
-                "from", from,
-                "size", size
-        );
-        return get("/all?from={from}&size={size}", userId, parameters);
-    }
 }
 

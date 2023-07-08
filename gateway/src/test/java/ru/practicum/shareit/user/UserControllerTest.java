@@ -48,7 +48,7 @@ class UserControllerTest {
 
     @Test
     void createUser() throws Exception {
-        when(client.createUser(any()))
+        when(client.addUser(any()))
                 .thenReturn(ResponseEntity.ok(userDto));
 
         mvc.perform(post("/users")

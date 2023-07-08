@@ -45,7 +45,7 @@ class ItemControllerTest {
 
     @Test
     void createItem() throws Exception {
-        when(client.createItem(anyLong(), any()))
+        when(client.addItem(anyLong(), any()))
                 .thenReturn(ResponseEntity.ok(itemDto));
 
         mvc.perform(post("/items")
@@ -61,7 +61,7 @@ class ItemControllerTest {
     @Test
     void createComment() throws Exception {
         CommentDto commentDto = new CommentDto("text");
-        when(client.createComment(anyLong(), anyLong(), any()))
+        when(client.addCommentToItem(anyLong(), anyLong(), any()))
                 .thenReturn(ResponseEntity.ok(commentDto));
 
         mvc.perform(post("/items/1/comment")
@@ -106,7 +106,7 @@ class ItemControllerTest {
 
     @Test
     void getItems() throws Exception {
-        when(client.getItems(anyLong(), anyInt(), anyInt()))
+        when(client.getAllItems(anyLong(), anyInt(), anyInt()))
                 .thenReturn(ResponseEntity.ok(itemDto));
 
         mvc.perform(get("/items")

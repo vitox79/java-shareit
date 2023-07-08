@@ -46,7 +46,7 @@ class ItemRequestControllerTest {
 
     @Test
     void createRequest() throws Exception {
-        when(client.createRequest(anyLong(), any()))
+        when(client.createNewRequest(anyLong(), any()))
                 .thenReturn(ResponseEntity.ok(requestDto));
 
         mvc.perform(post("/requests")

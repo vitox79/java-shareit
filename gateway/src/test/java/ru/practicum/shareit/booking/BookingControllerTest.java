@@ -50,7 +50,7 @@ class BookingControllerTest {
 
     @Test
     void getBookings() throws Exception {
-        when(client.getBookings(anyLong(), any(), anyInt(), anyInt()))
+        when(client.fetchBookingsByState(anyLong(), any(), anyInt(), anyInt()))
                 .thenReturn(ResponseEntity.ok(bookingDto));
 
         mvc.perform(get("/bookings")
@@ -64,7 +64,7 @@ class BookingControllerTest {
 
     @Test
     void getAllBookingByOwner() throws Exception {
-        when(client.getBookingsByOwner(anyLong(), any(), anyInt(), anyInt()))
+        when(client.fetchBookingsByOwnerAndState(anyLong(), any(), anyInt(), anyInt()))
                 .thenReturn(ResponseEntity.ok(bookingDto));
 
         mvc.perform(get("/bookings/owner")
@@ -121,7 +121,7 @@ class BookingControllerTest {
 
     @Test
     void bookItem() throws Exception {
-        when(client.bookItem(anyLong(), any()))
+        when(client.createBookingForItem(anyLong(), any()))
                 .thenReturn(ResponseEntity.ok(bookingDto));
 
         mvc.perform(post("/bookings")
@@ -137,7 +137,7 @@ class BookingControllerTest {
 
     @Test
     void getBooking() throws Exception {
-        when(client.getBooking(anyLong(), anyLong()))
+        when(client.fetchBookingById(anyLong(), anyLong()))
                 .thenReturn(ResponseEntity.ok(bookingDto));
 
         mvc.perform(get("/bookings/1")
