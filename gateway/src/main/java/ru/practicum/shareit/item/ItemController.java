@@ -22,7 +22,8 @@ public class ItemController {
     private final ItemClient itemClient;
 
     @PostMapping
-    public ResponseEntity<Object> addItem(@Positive @RequestHeader("X-Sharer-User-Id") long userId, @Validated(Create.class) @RequestBody ItemDto itemDto) {
+    public ResponseEntity<Object> addItem(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
+                                          @Validated(Create.class) @RequestBody ItemDto itemDto) {
         log.info("Creating item {}, userId={}", itemDto, userId);
         return itemClient.addItem(userId, itemDto);
     }
