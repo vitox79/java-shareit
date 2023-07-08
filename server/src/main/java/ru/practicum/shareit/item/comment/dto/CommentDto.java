@@ -3,8 +3,6 @@ package ru.practicum.shareit.item.comment.dto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,8 +12,6 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentDto {
     Long id;
-    @NotBlank
-    @Size(max = 512)
     String text;
     String authorName;
     LocalDateTime created;

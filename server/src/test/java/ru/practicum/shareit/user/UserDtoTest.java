@@ -8,10 +8,6 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @JsonTest
@@ -20,12 +16,6 @@ public class UserDtoTest {
     @Autowired
     private JacksonTester<UserDto> json;
 
-    private static final Validator validator;
-
-    static {
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        validator = validatorFactory.getValidator();
-    }
 
     @Test
     void serializeUserDto() throws Exception {

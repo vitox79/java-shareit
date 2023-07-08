@@ -8,9 +8,6 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.SimpleRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Slf4j
@@ -22,7 +19,7 @@ public class ItemRequestController {
     private final ItemRequestService service;
 
     @PostMapping
-    public ItemRequestDto createRequest(@RequestHeader("X-Sharer-User-Id") long userId, @Valid @RequestBody
+    public ItemRequestDto createRequest(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody
     SimpleRequestDto requestDto) {
         return service.add(userId, requestDto);
     }
@@ -34,15 +31,15 @@ public class ItemRequestController {
 
     @GetMapping
     public List<ItemRequestDto> getRequestsByUserId(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                    @PositiveOrZero @RequestParam(defaultValue = "0") int from,
-                                                    @Positive @RequestParam(defaultValue = "10") int size) {
+                                                    @RequestParam(defaultValue = "0") int from,
+                                                    @RequestParam(defaultValue = "10") int size) {
         return service.getAllByUser(userId, from, size);
     }
 
     @GetMapping("/all")
     public List<ItemRequestDto> getAllRequests(@RequestHeader("X-Sharer-User-Id") long userId,
-                                               @PositiveOrZero @RequestParam(defaultValue = "0") int from,
-                                               @Positive @RequestParam(defaultValue = "10") int size) {
+                                                @RequestParam(defaultValue = "0") int from,
+                                                @RequestParam(defaultValue = "10") int size) {
         return service.getAll(userId, from, size);
     }
 }
