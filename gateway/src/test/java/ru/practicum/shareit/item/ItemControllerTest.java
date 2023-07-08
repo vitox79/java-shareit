@@ -37,8 +37,8 @@ class ItemControllerTest {
     @BeforeEach
     void setUp() {
         mvc = MockMvcBuilders
-                .standaloneSetup(controller)
-                .build();
+            .standaloneSetup(controller)
+            .build();
 
         itemDto = new ItemDto(1L, "name", "desc", true, 1L);
     }
@@ -46,89 +46,89 @@ class ItemControllerTest {
     @Test
     void createItem() throws Exception {
         when(client.addItem(anyLong(), any()))
-                .thenReturn(ResponseEntity.ok(itemDto));
+            .thenReturn(ResponseEntity.ok(itemDto));
 
         mvc.perform(post("/items")
-                        .header("X-Sharer-User-Id", 1)
-                        .content(mapper.writeValueAsString(itemDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
+                .header("X-Sharer-User-Id", 1)
+                .content(mapper.writeValueAsString(itemDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk());
     }
 
     @Test
     void createComment() throws Exception {
         CommentDto commentDto = new CommentDto("text");
         when(client.addCommentToItem(anyLong(), anyLong(), any()))
-                .thenReturn(ResponseEntity.ok(commentDto));
+            .thenReturn(ResponseEntity.ok(commentDto));
 
         mvc.perform(post("/items/1/comment")
-                        .header("X-Sharer-User-Id", 1)
-                        .content(mapper.writeValueAsString(commentDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
+                .header("X-Sharer-User-Id", 1)
+                .content(mapper.writeValueAsString(commentDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk());
     }
 
     @Test
     void updateItem() throws Exception {
         itemDto = new ItemDto(null, "name", null, null, null);
         when(client.updateItem(anyLong(), anyLong(), any()))
-                .thenReturn(ResponseEntity.ok(itemDto));
+            .thenReturn(ResponseEntity.ok(itemDto));
 
         mvc.perform(patch("/items/1")
-                        .header("X-Sharer-User-Id", 1)
-                        .content(mapper.writeValueAsString(itemDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
+                .header("X-Sharer-User-Id", 1)
+                .content(mapper.writeValueAsString(itemDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk());
     }
 
     @Test
     void getItem() throws Exception {
         when(client.getItem(anyLong(), anyLong()))
-                .thenReturn(ResponseEntity.ok(itemDto));
+            .thenReturn(ResponseEntity.ok(itemDto));
 
         mvc.perform(get("/items/1")
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
+                .header("X-Sharer-User-Id", 1)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk());
     }
 
     @Test
     void getItems() throws Exception {
         when(client.getAllItems(anyLong(), anyInt(), anyInt()))
-                .thenReturn(ResponseEntity.ok(itemDto));
+            .thenReturn(ResponseEntity.ok(itemDto));
 
         mvc.perform(get("/items")
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
+                .header("X-Sharer-User-Id", 1)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk());
     }
 
     @Test
     void searchItems() throws Exception {
         when(client.searchText(anyLong(), anyString(), anyInt(), anyInt()))
-                .thenReturn(ResponseEntity.ok(itemDto));
+            .thenReturn(ResponseEntity.ok(itemDto));
 
         mvc.perform(get("/items/search?text=desc")
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
+                .header("X-Sharer-User-Id", 1)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk());
     }
 }
