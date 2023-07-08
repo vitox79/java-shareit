@@ -24,6 +24,7 @@ public class RequestClient extends BaseClient {
                 .build()
         );
     }
+
     public ResponseEntity<Object> getRequestsByUser(long userId, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
             "from", from,
@@ -39,6 +40,7 @@ public class RequestClient extends BaseClient {
         );
         return get("/all?from={from}&size={size}", userId, parameters);
     }
+
     public ResponseEntity<Object> createNewRequest(long userId, RequestDto requestDto) {
         return post("", userId, requestDto);
     }
