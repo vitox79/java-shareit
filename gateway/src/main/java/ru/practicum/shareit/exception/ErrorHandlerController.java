@@ -29,4 +29,13 @@ public class ErrorHandlerController {
                 "error", e.getMessage()
         );
     }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handleIllegalArgumentException(final Exception e) {
+        log.debug("400 Bad request", e.getMessage(), e);
+        return Map.of(
+            "error", e.getMessage()
+        );
+    }
+
 }
