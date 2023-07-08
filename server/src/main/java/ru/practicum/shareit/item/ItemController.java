@@ -9,7 +9,6 @@ import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -60,7 +59,6 @@ public class ItemController {
     public List<ItemDto> searchItems(@RequestParam("text") String searchText,
                                      @RequestParam(defaultValue = "0") int from,
                                      @RequestParam(defaultValue = "10") int size) {
-        if (searchText.isEmpty()) return new ArrayList<ItemDto>();
         return itemService.searchItems(searchText, from, size);
     }
 

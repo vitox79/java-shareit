@@ -11,6 +11,7 @@ import ru.practicum.shareit.validation.Update;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.Collections;
 
 @Slf4j
 @RestController
@@ -63,6 +64,9 @@ public class ItemController {
                                                     @RequestParam String text,
                                                     @PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                                     @Positive @RequestParam(defaultValue = "10") int size) {
+        if (text == null || text.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
         log.info("Get search items with userId={}, from={}, size={}", userId, from, size);
         return itemClient.searchText(userId, text, from, size);
     }
